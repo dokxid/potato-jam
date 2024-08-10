@@ -18,12 +18,12 @@ const key_names = [
 ]
 
 function calculate_keys() {
-  const note_min = localStorage.getItem("note_min")
-  const note_max = localStorage.getItem("note_max")
+  const note_min = Number(localStorage.getItem("note_min"))
+  const note_max = Number(localStorage.getItem("note_max"))
   if (!isNaN(note_min) && !isNaN(note_max)) {
     console.log('hello q_q')
     console.log(note_min)
-    key_amt.value = Math.abs(Number(note_min) - Number(note_max))
+    key_amt.value = Math.abs(note_min - note_max)
   }
 }
 
@@ -39,8 +39,8 @@ onMounted(() => init())
     <p><i>note: this currently only does absolute display</i></p>
     <div class="flex flex-row space-x-1 justify-center">
       <PianoKey
-          v-for="idx in key_amt"
-          :note="key_names[idx%(key_names.length)-1]"
+          v-for="(_, idx) in key_amt"
+          :note="key_names[idx%(key_names.length)]"
           @click="$emit('send_key_event', {event: 'clicked', note: idx})"
       />
     </div>
