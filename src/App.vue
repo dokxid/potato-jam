@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
 import PianoRoll from "./components/PianoRoll.vue";
-import Settings from "./components/Settings.vue"
-
+import NavBar from "./components/NavBar.vue";
 
 </script>
 
 <template>
-  <Settings/>
+  <NavBar/>
   <PianoRoll/>
 </template>

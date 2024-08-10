@@ -49,8 +49,7 @@ onBeforeMount(() => init())
 
 <template>
   <div class="space-y-3">
-    <div class="bg-base-100 p-5 max-w-xs text-base-content">
-      <h1 class="text-xl font-bold mb-3">settings</h1>
+    <div class="bg-base-100 max-w-xs text-base-content">
       <div v-for="item in local_settings.keys()" class="flex flex-col space-y-3 mb-2">
         <span>{{ item }}</span>
         <input
