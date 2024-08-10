@@ -2,6 +2,16 @@
 
 TBD
 
+## frameworks
+
+- vite
+- vue
+- tailwindcss
+
+planned:
+
+- webrtc for media communication
+
 ## setup
 
 > required: node
