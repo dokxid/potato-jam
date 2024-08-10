@@ -49,23 +49,23 @@ onBeforeMount(() => init())
 
 <template>
   <div class="space-y-3">
-    <div class="bg-primary p-5 max-w-xs text-primary-content">
+    <div class="bg-base-100 p-5 max-w-xs text-base-content">
       <h1 class="text-xl font-bold mb-3">settings</h1>
       <div v-for="item in local_settings.keys()" class="flex flex-col space-y-3 mb-2">
         <span>{{ item }}</span>
         <input
             type="text"
-            :placeholder="item + ' (default: ' + DEFAULT_SETTINGS.get(item) + ')'"
+            :placeholder="local_settings.get(item) + ' (default: ' + DEFAULT_SETTINGS.get(item) + ')'"
             :id="item"
             ref="input_refs"
             class="input input-bordered text-base-content max-w-xs"
         />
       </div>
       <div class="space-x-2">
-        <button class="btn mt-4" @click="apply_settings">
+        <button class="btn btn-primary mt-4" @click="apply_settings">
           apply
         </button>
-        <button class="btn mt-4" @click="reset_local_storage">
+        <button class="btn btn-ghost mt-4" @click="reset_local_storage">
           reset
         </button>
       </div>
