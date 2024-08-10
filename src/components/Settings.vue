@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS = new Map()
     .set("note_min", 0)
     .set("note_max", 36)
     .set("piano_roll_mode", "default")
+    .set("debug", false)
 
 function apply_settings() {
   for (let i = 0; i < input_refs.value.length; i++) {
