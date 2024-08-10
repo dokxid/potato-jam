@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# tailwind output (do npm run tw_watch)
+src/output.css
