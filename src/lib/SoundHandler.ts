@@ -2,7 +2,6 @@
 
 import * as Tone from "tone";
 
-
 export default class SoundHandler {
     
     player: Tone.Player
@@ -10,10 +9,13 @@ export default class SoundHandler {
     loaded: boolean
 
     constructor() {
-        Tone.start()
         this.player = new Tone.Player("src/assets/meow.ogg", onload=() => {this.set_loaded()}).toDestination();
         this.divisions = 12
         this.loaded = false
+    }
+
+    async init() {
+        await Tone.start()
     }
 
     set_loaded() {
@@ -26,7 +28,6 @@ export default class SoundHandler {
 
     async play(event: string, pitch: number) {
         console.log(this.loaded)
-        Tone.start()
         if (this.loaded) {
             if (event === "pressed")
                 this.press(pitch)

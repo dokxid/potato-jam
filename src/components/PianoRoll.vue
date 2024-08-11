@@ -1,6 +1,4 @@
 <script setup lang="ts">
-
-import { Tone } from "tone/build/esm/core/Tone";
 import SettingsUtil from "../lib/SettingsUtil";
 import PianoKey from "./piano/PianoKey.vue";
 
@@ -36,7 +34,7 @@ function init() {
   calculate_keys()
 }
 
-onMounted(() => init())
+onMounted(init)
 </script>
 
 <template>
