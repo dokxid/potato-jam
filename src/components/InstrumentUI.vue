@@ -41,9 +41,23 @@ onMounted(() => init())
 </script>
 
 <template>
-  <button class="btn btn-accent" v-if="!started" @click="initSoundHandler">Click to start audio</button>
-  <div class="bottom text-right text-bottom">
-    <InstrumentSwitcher @update_instrument="update_instrument" v-model="instrument_selected" class="fixed-bottom"/>
+  <div class="flex flex-col gap-3">
+    <div class="space-x-2">
+      <button
+          class="btn btn-accent"
+          v-if="!started"
+          @click="initSoundHandler"
+      > Click to start audio </button>
+      <button class="btn btn-accent">select file</button>
+    </div>
+    <input type="file" class="file-input file-input-bordered w-full max-w-xs"/>
+    <div class="bottom text-right text-bottom">
+      <InstrumentSwitcher
+          @update_instrument="update_instrument"
+          v-model="instrument_selected"
+          class="fixed-bottom select select-bordered w-full max-w-xs"
+      />
+    </div>
   </div>
 </template>
 
