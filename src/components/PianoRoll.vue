@@ -100,7 +100,7 @@ onMounted(init)
       > {{`+${transpose_amt}`}} </button>
       <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range range-primary"/>
     </div>
-    <div class="flex flex-row w-full min-h-20 p-2 bg-base-100 dark:bg-base-300 space-x-1 justify-center">
+    <div class="flex flex-row w-full min-h-20 p-2 bg-base-100 space-x-1 justify-center rounded-sm">
       <PianoKeyDefault
           v-for="(_, idx) in key_amt"
           :note="key_names[idx_trans(idx)%(key_names.length)]"
@@ -111,7 +111,7 @@ onMounted(init)
           @mouseleave="release_key(idx_trans(idx))"
       />
     </div>
-    <select v-model="scale_selected" class="select select-bordered w-full max-w-xs">
+    <select v-model="scale_selected" class="select select-primary text-base-content w-full max-w-xs">
       <option
           :value="scale"
           v-for="scale in Object.keys(constants.SCALES)">{{ scale }}

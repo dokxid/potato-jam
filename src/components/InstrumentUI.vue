@@ -52,7 +52,7 @@ onMounted(() => init())
     <div>
       <h3>general settings</h3>
       <button
-          class="btn btn-primary"
+          class="btn btn-primary w-full"
           v-if="!started"
           @click="initSoundHandler"
       > Click to start audio
@@ -62,8 +62,8 @@ onMounted(() => init())
       <h3>sample settings</h3>
       <div class="flex flex-row space-x-2">
         <input type="file" @change="(e) => {read_file(e.target.files); file_loaded = true }"
-               class="file-input file-input-bordered w-full max-w-xs"/>
-        <button class="btn btn-primary shrink" :disabled="!file_loaded">apply</button>
+               class="file-input file-input-primary w-full text-base-content"/>
+        <button class="btn btn-primary shrink" v-show="file_loaded">apply</button>
       </div>
       <div v-show="file_loaded">
         {{ "loaded type: " + file }}
@@ -74,7 +74,7 @@ onMounted(() => init())
       <InstrumentSwitcher
           @update_instrument="update_instrument"
           v-model="instrument_selected"
-          class="fixed-bottom select select-bordered w-full max-w-xs"
+          class="fixed-bottom select select-bordered w-full text-base-content"
       />
     </div>
   </div>

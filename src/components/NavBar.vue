@@ -39,7 +39,7 @@ const sub_pages = ["view 1", "view 2"]
           <li><a>{{ menu_items[2] }}</a></li>
         </ul>
       </div>
-      <a class="btn btn-ghost bg-base-300 text-xl">potato jam</a>
+      <a class="btn btn-ghost text-xl">potato jam</a>
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
