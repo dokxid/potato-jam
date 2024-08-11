@@ -1,5 +1,10 @@
 import * as Tone from "tone";
 
+export const INSTRUMENT_LIST = [
+    "meow",
+    "synth"
+]
+
 export default class Instrument {
     divisions: number = 12
     octave: number = 4
