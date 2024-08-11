@@ -19,6 +19,11 @@ const key_names = [
   // LOL? HARDCODED (；′⌒`)
   "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
 ]
+const keybinds = [ // they got that uauuigug au ui i o[]
+  "A", "W",  "S", "E",  "D", "F", "T",  "G", "Y",  "H", "U", "J"
+]
+
+let prev_key = ""
 
 function calculate_keys() {
   const note_min = SettingsUtil.get("note_min")
@@ -31,6 +36,22 @@ function calculate_keys() {
 }
 
 function init() {
+  window.addEventListener("keydown", function(ev) {
+    let keybind_uppercase = ev.key.toUpperCase()
+
+    if (keybinds.includes(keybind_uppercase) && !(ev.target.tagName == "INPUT") && keybind_uppercase !== prev_key) {
+      emit("send_key_event", {event: "pressed", note: keybinds.indexOf(keybind_uppercase)})
+      prev_key = keybind_uppercase
+    }
+  })
+  window.addEventListener("keyup", function(ev) {
+    let keybind_uppercase = ev.key.toUpperCase()
+
+    if (keybinds.includes(keybind_uppercase) && !(ev.target.tagName == "INPUT")) {
+      emit("send_key_event", {event: "released", note: keybinds.indexOf(keybind_uppercase)})
+      prev_key = ""
+    }
+  })
   calculate_keys()
 }
 

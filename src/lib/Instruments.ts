@@ -2,6 +2,7 @@ import * as Tone from "tone";
 
 export default class Instrument {
     divisions: number = 12
+    octave: number = 4
     id: string = "default"
     
     constructor() {
@@ -19,7 +20,7 @@ export default class Instrument {
         }
     }
     get_pitch(pitch: number) {
-        return 440*2**((pitch - 69)/12)
+        return 440*2**(((pitch+this.octave * this.divisions) - 69)/12)
     }
 
     set_divisions(divisions: number) {
