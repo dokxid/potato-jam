@@ -21,7 +21,7 @@ onMounted(init)
 
 <template>
     Your room id: {{ PotatoNet.id }}
-    <button @click="initServer" class="btn btn-accent">Init server</button><br>
+    <button @click="initServer" class="btn btn-primary">Init server</button><br>
     <input placeholder="connect id" v-model="connectId">
-    <button @click="initClient" class="btn btn-accent">Init client</button>
+    <button @click="initClient" class="btn btn-primary">Init client</button>
 </template>

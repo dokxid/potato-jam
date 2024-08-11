@@ -51,11 +51,11 @@ onMounted(() => init())
   <div class="flex flex-col gap-3">
     <div class="space-x-2">
       <button
-          class="btn btn-accent"
+          class="btn btn-primary"
           v-if="!started"
           @click="initSoundHandler"
       > Click to start audio </button>
-      <button class="btn btn-accent" :disabled="!file_loaded">select file</button>
+      <button class="btn btn-primary" :disabled="!file_loaded">select file</button>
     </div>
     <input type="file" @change="(e) => {read_file(e.target.files); file_loaded = true }" class="file-input file-input-bordered w-full max-w-xs"/>
     <div>

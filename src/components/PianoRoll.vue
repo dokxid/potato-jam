@@ -92,10 +92,13 @@ onMounted(init)
 
 <template>
   <div class="flex flex-col space-y-4">
-    <p><i>note: this currently only does absolute display</i></p>
     <div class="flex flex-row gap-4 items-center">
-      <button class="btn btn-neutral font-mono"> {{`+${transpose_amt}`}} </button>
-      <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range"/>
+      <button
+          class="btn font-mono"
+          :class="[transpose_amt == 0 ? 'btn-neutral' : 'btn-primary']"
+          @click="transpose_amt = 0"
+      > {{`+${transpose_amt}`}} </button>
+      <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range range-primary"/>
     </div>
     <div class="flex flex-row w-full min-h-20 p-2 bg-base-100 dark:bg-base-300 space-x-1 justify-center">
       <PianoKeyDefault
