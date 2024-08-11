@@ -3,7 +3,12 @@ import * as Tone from "tone";
 export default class Instrument {
     divisions: number = 12
     octave: number = 4
+    locked: boolean = true
     id: string = "default"
+
+    unlock() {
+        this.locked = false
+    }
     
     constructor() {
         
@@ -48,14 +53,21 @@ export class meow extends Instrument {
                 C4: "meow.ogg",
             },
             release: 1,
-            baseUrl: "src/assets/"
+            baseUrl: "src/assets/",
+            onload: () => {
+                this.unlock()
+            }
         }).toDestination()
     }
 
     async press(pitch: number) {
+        if (this.locked)
+            return
         await this.sampler.triggerAttack(this.get_pitch(pitch))
     }
     async release(pitch: number) {
+        if (this.locked)
+            return
         await this.sampler.triggerRelease(this.get_pitch(pitch))
     }
 }
@@ -68,12 +80,17 @@ export class PolySynth extends Instrument {
         super()
 
         this.polysynth = new Tone.PolySynth().toDestination()
+        this.unlock()
     }
 
     async press(pitch: number) {
+        if (this.locked)
+            return
         await this.polysynth.triggerAttack(this.get_pitch(pitch))
     }
     async release(pitch: number) {
+        if (this.locked)
+            return
         await this.polysynth.triggerRelease(this.get_pitch(pitch))
     }
 }
