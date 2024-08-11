@@ -4,7 +4,7 @@ import * as Tone from "tone";
 import Instrument from "./Instruments"
 
 export default class SoundHandler {
-    
+
     loaded: boolean
     instruments: Map<string, Instrument>
 
@@ -20,9 +20,11 @@ export default class SoundHandler {
     load_instrument(instrument: Instrument) {
         this.instruments.set(instrument.id, instrument)
     }
+
     load_instrument_id(id: string) {
         this.load_instrument(Instrument.idInstancer(id))
     }
+
     is_instrument_loaded(id: string): boolean {
         return this.instruments.has(id)
     }
@@ -45,11 +47,10 @@ export default class SoundHandler {
     async press(pitch: number, id: string) {
         this.instruments.get(id)?.press(pitch)
     }
+
     async release(pitch: number, id: string) {
         this.instruments.get(id)?.release(pitch)
     }
-
-    
 
 
 }

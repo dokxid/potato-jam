@@ -1,48 +1,43 @@
 <script setup lang="ts">
 
+// imports
+import {ref} from "vue";
+
+// component imports
+import UIContainer from "./components/ui/UIContainer.vue";
 import PianoRoll from "./components/PianoRoll.vue";
-import InstrumentSwitcher from "./components/InstrumentSwitcher.vue";
 import NavBar from "./components/NavBar.vue";
 import NetTest from "./components/NetTest.vue";
-import SoundHandler from "./lib/SoundHandler"
-import { onMounted, ref } from "vue";
+import InstrumentUI from "./components/InstrumentUI.vue";
 
-let soundHandler:SoundHandler;
-let started = ref(false); 
+// refs
+const started = ref<boolean>(false)
+const sound_event = ref<Object>()
 
-let instrument_selected: string = "meow"
-
+// functions
 function process_key(payload: { event: string, note: number }) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
-  soundHandler.play(payload.event, payload.note, instrument_selected)
+  sound_event.value = {event: payload.event, note: payload.note}
 }
-
-function init() {
-  soundHandler = new SoundHandler()
-}
-
-async function initSoundHandler() {
-  await soundHandler.load_instrument_id("meow")
-  await soundHandler.init()
-  started.value = true
-}
-
-async function update_instrument() {
-  await soundHandler.load_instrument_id(instrument_selected)
-}
-
-onMounted(() => init())
 
 </script>
 
 <template>
   <NavBar/>
-  <button class="btn btn-accent" v-if="!started" @click="initSoundHandler">Click to start audio</button>
-  <div class="flex justify-center items-center" v-if="started">
-    <PianoRoll class="container" @send_key_event="payload => process_key(payload)"/>
-  </div>
-  <NetTest/>
-  <div class="bottom text-right text-bottom">
-    <InstrumentSwitcher @update_instrument="update_instrument" v-model="instrument_selected" class="fixed-bottom" />
+  <div class="grid grid-flow-row grid-cols-3 gap-4 px-10 py-5 items-center">
+    <UIContainer class="col-span-2">
+      <NetTest/>
+    </UIContainer>
+    <UIContainer>
+      <InstrumentUI
+          v-model="sound_event"
+          @sound_handler_initialized="started = true"
+      />
+    </UIContainer>
+    <UIContainer class="col-span-3">
+      <div class="flex container justify-center items-center" v-if="started">
+        <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+      </div>
+    </UIContainer>
   </div>
 </template>
