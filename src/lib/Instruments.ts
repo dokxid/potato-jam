@@ -12,16 +12,18 @@ export default class Instrument {
         switch (id) {
             case "meow":
                 return new meow()
+            case "synth":
+                return new Synth()
             default:
                 return new Instrument()
         }
     }
+    get_pitch(pitch: number) {
+        return 440*2**((pitch-69)/12)
+    }
 
     set_divisions(divisions: number) {
         this.divisions = divisions
-    }
-    get_pitch(pitch: number) {
-        return 2**(pitch/this.divisions)
     }
     
     async press(pitch: number) {
@@ -33,7 +35,6 @@ export default class Instrument {
 }
 
 export class meow extends Instrument {
-    divisions: number = 12
     player: Tone.Player
     public id: string = "meow"
 
@@ -51,11 +52,34 @@ export class meow extends Instrument {
         this.player = new Tone.Player("src/assets/meow.ogg").toDestination()
     }
 
+    get_pitch(pitch: number) {
+        return 2**(pitch/this.divisions)
+    }
+
     async press(pitch: number) {
         this.player.playbackRate = this.get_pitch(pitch)
         await this.player.start()
     }
     async release(pitch: number) {
         await this.player.stop()
+    }
+}
+
+export class Synth extends Instrument {
+    synth: Tone.Synth;
+    public id: string = "synth"
+
+    constructor() {
+        super()
+
+        this.synth = new Tone.Synth().toDestination();
+    }
+
+    async press(pitch: number) {
+        this.synth.triggerAttack(this.get_pitch(pitch))
+        console.log("current pitch in hertz: " + this.get_pitch(pitch))
+    }
+    async release(pitch: number) {
+        this.synth.triggerRelease()
     }
 }
