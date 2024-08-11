@@ -39,9 +39,6 @@ type ServerConnectionInfo = {
     user?: PotatoUser;
 }
 
-function throwIncompletePayloadType(type: never): never {
-    throw new Error(`Unknown client payload type ${type}!`);
-}
 export default class PotatoServer {
     peer: Peer;
     connections: {[id: PotatoPeerId]: ServerConnectionInfo};
@@ -74,9 +71,9 @@ export default class PotatoServer {
             console.warn(`Trying to send data to ${id} but it is not connected!`);
             return false;
         }
-        let payload: ServerPayload<T> = {
-            type: type,
-            data: data
+        const payload: ServerPayload<T> = {
+            type,
+            data
         }
         await peer.connection.send(payload);
         return true;
@@ -144,6 +141,7 @@ export default class PotatoServer {
             console.warn(`Got ${data} from ${id}!`)
             return;
         }
+        console.log(data)
         if(typeof(data) !== "object") {
             console.warn(`Received unknown data type from ${id}! Expected "object" got "${typeof(data)}"`)
             return;

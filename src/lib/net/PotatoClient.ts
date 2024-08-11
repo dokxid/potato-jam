@@ -2,6 +2,7 @@ import Peer, { DataConnection } from "peerjs";
 import { PotatoPeerId, PotatoUser } from "./PotatoNet";
 import { ServerPayload, ServerPayloadType } from "./PotatoServer";
 import { Optional } from "../TypeUtil";
+import SettingsUtil from "../SettingsUtil";
 
 // Please make K=V in this enum!!
 export enum ClientPayloadType {
@@ -31,13 +32,32 @@ export default class PotatoClient {
         this.serverId = serverId;
         this.connected = {};
         this.connection = peer.connect(serverId);
-        this.connection.on("open", this.openConnection);
-        this.connection.on("close", this.closeConnection);
-        this.connection.on("data", this.processData);
+        this.connection.on("open", () => this.openConnection());
+        this.connection.on("close", () => this.closeConnection());
+        this.connection.on("data", (data) => this.processData(data));
     }
 
-    openConnection() {
+    async send<T extends ClientPayloadType>(type: T, data: ClientPayloadData<T>) {
+        if(!this.connection.open) {
+            console.warn(`Connection to server is closed!`, type, data)
+            return false;
+        }
+        const payload: ClientPayload<T> = {
+            type,
+            data
+        } 
+        await this.connection.send(payload);
+        return true;
+    }
 
+    async openConnection() {
+        console.log("Connection open to server!")
+        let user = SettingsUtil.get("user");
+        await this.send(ClientPayloadType.IDENTIFY, {
+            display_name: user.display_name,
+            icon: user.icon,
+            color: user.color
+        })
     }
 
     closeConnection() {
@@ -63,6 +83,7 @@ export default class PotatoClient {
             console.warn(`Got ${data} from server ${this.serverId}!`)
             return;
         }
+        console.log(data)
         if(typeof(data) !== "object") {
             console.warn(`Received unknown data type from server ${this.serverId}! Expected "object" got "${typeof(data)}"`)
             return;
