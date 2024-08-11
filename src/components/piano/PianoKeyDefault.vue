@@ -11,16 +11,17 @@ const props = defineProps<{
 
 let debug = SettingsUtil.getRef("debug")
 const classObject = computed(() => ({
-  'bg-amber-500': props.isDown.value,
-  'bg-white': !props.isDown.value && !props.highlighted,
-  'bg-amber-300': props.highlighted,
+  'bg-pink-500': props.isDown.value,
+  'bg-pink-900': !props.isDown.value && !props.highlighted,
+  'h-10': !props.highlighted,
+  'bg-pink-100 h-16': props.highlighted,
 }))
 
 </script>
 
 <template>
   <div 
-      class="flex w-6 h-16 text-black min-w-1 justify-center items-center"
+      class="flex w-6 text-black min-w-1 justify-center items-center"
       :class="classObject"
   >
     <p class="note-name" v-show="debug">{{ note }}</p>

@@ -18,7 +18,7 @@ const emit = defineEmits({
 })
 
 const key_amt = ref<number>(0)
-const scale_selected = ref("no scale highlight")
+const scale_selected = ref("chromatic")
 
 const key_names = constants.SEMITONE_NAMES
 const keybinds = constants.KEYBINDS
@@ -89,7 +89,7 @@ onMounted(init)
 <template>
   <div class="flex flex-col space-y-4">
     <p><i>note: this currently only does absolute display</i></p>
-    <div class="flex flex-row space-x-1 justify-center">
+    <div class="flex flex-row h-16 space-x-1 justify-center">
       <PianoKeyDefault
           v-for="(_, idx) in key_amt"
           :note="key_names[idx%(key_names.length)]"

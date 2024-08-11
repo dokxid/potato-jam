@@ -3,8 +3,8 @@ type ScaleMap = {
 }
 
 const scale_map: ScaleMap = {}
-scale_map['no scale highlight'] =
-    []
+scale_map['chromatic'] =
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 scale_map['diatonic'] =
     [0, 2, 4, 5, 7, 9, 11]
 scale_map['melodic minor'] =
