@@ -89,7 +89,7 @@ onMounted(init)
 <template>
   <div class="flex flex-col space-y-4">
     <p><i>note: this currently only does absolute display</i></p>
-    <div class="flex flex-row h-16 space-x-1 justify-center">
+    <div class="flex flex-row min-h-20 p-2 bg-base-100 dark:bg-base-300 space-x-1 justify-center">
       <PianoKeyDefault
           v-for="(_, idx) in key_amt"
           :note="key_names[idx%(key_names.length)]"

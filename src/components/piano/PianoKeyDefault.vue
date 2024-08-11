@@ -14,7 +14,7 @@ const classObject = computed(() => ({
   'bg-pink-500': props.isDown.value,
   'bg-pink-900': !props.isDown.value && !props.highlighted,
   'h-10': !props.highlighted,
-  'bg-pink-100 h-16': props.highlighted,
+  'bg-pink-200 h-16': props.highlighted,
 }))
 
 </script>
