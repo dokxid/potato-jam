@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "peerjs": "^1.5.4",
     "vue": "^3.4.35"
   },
   "devDependencies": {
