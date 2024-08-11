@@ -5,7 +5,6 @@ import PianoKeyDefault from "./piano/PianoKeyDefault.vue";
 import {constants} from "../data/constants.ts";
 
 import {computed, onMounted, ref, watch} from "vue";
-import PianoKeyBlack from "./piano/PianoKeyBlack.vue";
 
 // emits
 const emit = defineEmits({
@@ -18,13 +17,14 @@ const emit = defineEmits({
 })
 
 const key_amt = ref<number>(0)
-const scale_selected = ref("chromatic")
+const scale_selected = ref<string>("diatonic")
+const transpose_amt = ref<number>(0)
 
 const key_names = constants.SEMITONE_NAMES
 const keybinds = constants.KEYBINDS
 
 let prev_key = ""
-let scale_pattern: Array<number> = []
+let scale_pattern: Array<number> = constants.SCALES[scale_selected.value]
 
 function calculate_keys() {
   const note_min = SettingsUtil.get("note_min")
@@ -63,6 +63,10 @@ watch(scale_selected, async (new_scale) => {
   change_scale(new_scale)
 })
 
+function idx_trans(idx: number): number {
+  return idx + transpose_amt.value
+}
+
 function init() {
   window.addEventListener("keydown", function (ev) {
     let keybind_uppercase = ev.key.toUpperCase()
@@ -89,15 +93,19 @@ onMounted(init)
 <template>
   <div class="flex flex-col space-y-4">
     <p><i>note: this currently only does absolute display</i></p>
-    <div class="flex flex-row min-h-20 p-2 bg-base-100 dark:bg-base-300 space-x-1 justify-center">
+    <div class="flex flex-row gap-4 items-center">
+      <button class="btn btn-neutral font-mono"> {{`+${transpose_amt}`}} </button>
+      <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range"/>
+    </div>
+    <div class="flex flex-row w-full min-h-20 p-2 bg-base-100 dark:bg-base-300 space-x-1 justify-center">
       <PianoKeyDefault
           v-for="(_, idx) in key_amt"
-          :note="key_names[idx%(key_names.length)]"
-          :is-down="computed(() => keysDown[idx])"
+          :note="key_names[idx_trans(idx)%(key_names.length)]"
+          :is-down="computed(() => keysDown[idx_trans(idx)])"
           :highlighted="scale_pattern.includes(idx%12)"
-          @mousedown="press_key(idx)"
-          @mouseup="release_key(idx)"
-          @mouseleave="release_key(idx)"
+          @mousedown="press_key(idx_trans(idx))"
+          @mouseup="release_key(idx_trans(idx))"
+          @mouseleave="release_key(idx_trans(idx))"
       />
     </div>
     <select v-model="scale_selected" class="select select-bordered w-full max-w-xs">
