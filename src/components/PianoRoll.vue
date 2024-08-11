@@ -1,13 +1,16 @@
 <script setup lang="ts">
 
+import { Tone } from "tone/build/esm/core/Tone";
 import SettingsUtil from "../lib/SettingsUtil";
 import PianoKey from "./piano/PianoKey.vue";
+
 import {onMounted, ref} from "vue";
 
 // emits
 const emit = defineEmits({
   send_key_event(payload: { event: string, note: number }) {
     // validating
+
     console.log(payload)
     return true;
   }
@@ -43,7 +46,8 @@ onMounted(() => init())
       <PianoKey
           v-for="(_, idx) in key_amt"
           :note="key_names[idx%(key_names.length)]"
-          @click="$emit('send_key_event', {event: 'clicked', note: idx})"
+          @mousedown="$emit('send_key_event', {event: 'pressed', note: idx})"
+          @mouseup="$emit('send_key_event', {event: 'released', note: idx})"
       />
     </div>
   </div>
