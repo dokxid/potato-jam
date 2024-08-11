@@ -1,5 +1,6 @@
 export const constants = {
     SEMITONE_NAMES: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+    KEYBINDS: ["A", "W", "S", "E", "D", "F", "T", "G", "Y", "H", "U", "J"], // they got that uauuigug au ui i o[] <--
     HEPTATONIC_SCALES: [
         {
             name: "diatonic",

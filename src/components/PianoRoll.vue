@@ -18,10 +18,9 @@ const emit = defineEmits({
 
 const key_amt = ref<number>(0)
 const scale_selected = ref()
-const keybinds = [ // they got that uauuigug au ui i o[] <-- 😭
-  "A", "W", "S", "E", "D", "F", "T", "G", "Y", "H", "U", "J"
-]
+
 const key_names = constants.SEMITONE_NAMES
+const keybinds = constants.KEYBINDS
 
 let prev_key = ""
 
