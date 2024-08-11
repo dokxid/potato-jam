@@ -9,9 +9,9 @@ import {computed, onMounted, ref} from "vue";
 // emits
 const emit = defineEmits({
   send_key_event(payload: { event: string, note: number }) {
-    // validating
-
-    //console.log(payload)
+    if (SettingsUtil.get('debug')) {
+      console.log(payload)
+    }
     return true;
   }
 })
@@ -35,7 +35,7 @@ function calculate_keys() {
   }
 }
 
-const keysDown: Ref<{ [note: number]: boolean }> = ref({})
+const keysDown = ref<{ [note: number]: boolean }>({})
 
 function press_key(note: number) {
   emit("send_key_event", {event: "pressed", note})
@@ -82,7 +82,7 @@ onMounted(init)
       <PianoKey
           v-for="(_, idx) in key_amt"
           :note="key_names[idx%(key_names.length)]"
-          :is-down="computed(() => keysDown[idx] == true)"
+          :is-down="computed(() => keysDown[idx])"
           @mousedown="press_key(idx)"
           @mouseup="release_key(idx)"
           @mouseleave="release_key(idx)"
