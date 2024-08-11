@@ -26,7 +26,7 @@ function process_key(payload: { event: string, note: number }) {
 
   <NavBar/>
 
-  <div class="grid grid-flow-row grid-cols-3 gap-4 px-10 py-5 items-center">
+  <div class="container mx-auto grid grid-flow-row grid-cols-3 gap-4 py-5 items-center">
 
     <UIContainer :title="'networking'" class="col-span-2">
       <NetTest/>

@@ -8,7 +8,7 @@ const sub_pages = ["view 1", "view 2"]
 </script>
 
 <template>
-  <div class="navbar bg-base-100">
+  <div class="navbar py-5 bg-base-100 container mx-auto [--navbar-padding:0]">
     <div class="navbar-start">
       <div class="dropdown">
         <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -39,7 +39,7 @@ const sub_pages = ["view 1", "view 2"]
           <li><a>{{ menu_items[2] }}</a></li>
         </ul>
       </div>
-      <a class="btn btn-ghost text-xl">potato jam</a>
+      <a class="btn btn-ghost bg-base-300 text-xl">potato jam</a>
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
