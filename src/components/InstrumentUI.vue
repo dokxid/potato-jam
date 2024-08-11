@@ -17,6 +17,7 @@ watch(sound_event, async (new_sound_event: Object) => {
   try {
     await soundHandler.play(new_sound_event.event, new_sound_event.note, instrument_selected)
   } catch (e) {
+    console.log('HELLO!')
     console.error(e)
   }
 })
