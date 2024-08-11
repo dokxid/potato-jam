@@ -25,16 +25,16 @@ function process_key(payload: { event: string, note: number }) {
 <template>
   <NavBar/>
   <div class="grid grid-flow-row grid-cols-3 gap-4 px-10 py-5 items-center">
-    <UIContainer class="col-span-2">
+    <UIContainer :title="'networking'" class="col-span-2">
       <NetTest/>
     </UIContainer>
-    <UIContainer>
+    <UIContainer :title="'instrument'">
       <InstrumentUI
           v-model="sound_event"
           @sound_handler_initialized="started = true"
       />
     </UIContainer>
-    <UIContainer class="col-span-3">
+    <UIContainer :title="'piano roll'" class="col-span-3">
       <div class="flex container justify-center items-center" v-if="started">
         <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
       </div>
