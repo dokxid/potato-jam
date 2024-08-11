@@ -2,11 +2,13 @@
 
 import PianoRoll from "./components/PianoRoll.vue";
 import NavBar from "./components/NavBar.vue";
+import NetTest from "./components/NetTest.vue";
 import SoundHandler from "./lib/SoundHandler"
 import { onMounted, ref } from "vue";
 
 let soundHandler:SoundHandler;
 let started = ref(false); 
+
 
 function process_key(payload: { event: string, note: number }) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
@@ -33,4 +35,5 @@ onMounted(() => init())
   <div class="flex justify-center items-center" v-if="started">
     <PianoRoll class="container" @send_key_event="payload => process_key(payload)"/>
   </div>
+  <NetTest/>
 </template>
