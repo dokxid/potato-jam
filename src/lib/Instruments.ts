@@ -13,13 +13,13 @@ export default class Instrument {
             case "meow":
                 return new meow()
             case "synth":
-                return new Synth()
+                return new PolySynth()
             default:
                 return new Instrument()
         }
     }
     get_pitch(pitch: number) {
-        return 440*2**((pitch-69)/12)
+        return 440*2**((pitch - 69)/12)
     }
 
     set_divisions(divisions: number) {
@@ -35,51 +35,44 @@ export default class Instrument {
 }
 
 export class meow extends Instrument {
-    player: Tone.Player
+    sampler: Tone.Sampler
     public id: string = "meow"
 
     constructor() {
         super()
 
-        // was trying to use a sampler but it doesnt have playbackRate so,,,,, but gonna leave this in just in case
-        /*this.sampler = new Tone.Sampler({
+        // woops i thought it did something completely different this does fit
+        this.sampler = new Tone.Sampler({
             urls: {
-                C4: "meow.ogg"
+                C4: "meow.ogg",
             },
             release: 1,
-            baseUrl: "src/assets",
-        }).toDestination()*/
-        this.player = new Tone.Player("src/assets/meow.ogg").toDestination()
-    }
-
-    get_pitch(pitch: number) {
-        return 2**(pitch/this.divisions)
+            baseUrl: "src/assets/"
+        }).toDestination()
     }
 
     async press(pitch: number) {
-        this.player.playbackRate = this.get_pitch(pitch)
-        await this.player.start()
+        await this.sampler.triggerAttack(this.get_pitch(pitch))
     }
     async release(pitch: number) {
-        await this.player.stop()
+        await this.sampler.triggerRelease(this.get_pitch(pitch))
     }
 }
 
-export class Synth extends Instrument {
-    synth: Tone.Synth;
+export class PolySynth extends Instrument {
     public id: string = "synth"
+    polysynth: Tone.PolySynth
 
     constructor() {
         super()
 
-        this.synth = new Tone.Synth().toDestination();
+        this.polysynth = new Tone.PolySynth().toDestination()
     }
 
     async press(pitch: number) {
-        this.synth.triggerAttack(this.get_pitch(pitch))
-        console.log("current pitch in hertz: " + this.get_pitch(pitch))
+        await this.polysynth.triggerAttack(this.get_pitch(pitch))
     }
     async release(pitch: number) {
-        this.synth.triggerRelease()
+        await this.polysynth.triggerRelease(this.get_pitch(pitch))
     }
 }

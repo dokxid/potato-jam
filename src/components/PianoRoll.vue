@@ -9,7 +9,7 @@ const emit = defineEmits({
   send_key_event(payload: { event: string, note: number }) {
     // validating
 
-    console.log(payload)
+    //console.log(payload)
     return true;
   }
 })
@@ -46,6 +46,7 @@ onMounted(init)
           :note="key_names[idx%(key_names.length)]"
           @mousedown="$emit('send_key_event', {event: 'pressed', note: idx})"
           @mouseup="$emit('send_key_event', {event: 'released', note: idx})"
+          @mouseleave="$emit('send_key_event', {event: 'released', note: idx})"
       />
     </div>
   </div>

@@ -32,12 +32,9 @@ export default class SoundHandler {
     }
 
     async play(event: string, pitch: number, id: string) {
-        console.log(this.is_instrument_loaded(id))
-
         if (!this.is_instrument_loaded(id)) {
             await this.load_instrument(Instrument.idInstancer(id))
         }
-        console.log(this.instruments.get(id))
 
         if (event === "pressed")
             this.press(pitch, id)
