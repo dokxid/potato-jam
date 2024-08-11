@@ -10,6 +10,9 @@ let started = ref(false);
 let soundHandler: SoundHandler;
 let instrument_selected: string = "meow"
 
+const file_loaded = ref<boolean>(false)
+let file = ""
+
 // emits
 const emit = defineEmits(['sound_handler_initialized'])
 
@@ -21,6 +24,10 @@ watch(sound_event, async (new_sound_event: Object) => {
     console.error(e)
   }
 })
+
+async function read_file(files) {
+  file = await files.item(0).text()
+}
 
 async function initSoundHandler() {
   await soundHandler.load_instrument_id("meow")
@@ -48,10 +55,13 @@ onMounted(() => init())
           v-if="!started"
           @click="initSoundHandler"
       > Click to start audio </button>
-      <button class="btn btn-accent">select file</button>
+      <button class="btn btn-accent" :disabled="!file_loaded">select file</button>
     </div>
-    <input type="file" class="file-input file-input-bordered w-full max-w-xs"/>
-    <div class="bottom text-right text-bottom">
+    <input type="file" @change="(e) => {read_file(e.target.files); file_loaded = true }" class="file-input file-input-bordered w-full max-w-xs"/>
+    <div>
+      {{ file }}
+    </div>
+    <div class="">
       <InstrumentSwitcher
           @update_instrument="update_instrument"
           v-model="instrument_selected"
