@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import SettingsUtil from "../lib/SettingsUtil";
 import PianoKey from "./piano/PianoKey.vue";
 import {onMounted, ref} from "vue";
 
@@ -8,6 +9,7 @@ const emit = defineEmits({
   send_key_event(payload: { event: string, note: number }) {
     // validating
     console.log(payload)
+    return true;
   }
 })
 
@@ -18,8 +20,8 @@ const key_names = [
 ]
 
 function calculate_keys() {
-  const note_min = Number(localStorage.getItem("note_min"))
-  const note_max = Number(localStorage.getItem("note_max"))
+  const note_min = SettingsUtil.get("note_min")
+  const note_max = SettingsUtil.get("note_max")
   if (!isNaN(note_min) && !isNaN(note_max)) {
     console.log('hello q_q')
     console.log(note_min)
