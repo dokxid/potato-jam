@@ -2,7 +2,7 @@
 import SettingsUtil from "../lib/SettingsUtil";
 import PianoKey from "./piano/PianoKey.vue";
 
-import {onMounted, ref} from "vue";
+import {computed, onMounted, Ref, ref} from "vue";
 
 // emits
 const emit = defineEmits({
@@ -35,20 +35,36 @@ function calculate_keys() {
   }
 }
 
+const keysDown: Ref<{[note: number]: boolean}> = ref({})
+
+function press_key(note: number) {
+  emit("send_key_event", {event: "pressed", note })
+  keysDown.value[note] = true;
+
+}
+function release_key(note: number) {
+  emit("send_key_event", {event: "released", note })
+  delete keysDown.value[note];
+}
+
+function check_input(ev: KeyboardEvent) {
+  return !(ev.target && "tagName" in ev.target && ev.target.tagName == "INPUT")
+}
+
 function init() {
   window.addEventListener("keydown", function(ev) {
     let keybind_uppercase = ev.key.toUpperCase()
 
-    if (keybinds.includes(keybind_uppercase) && !(ev.target.tagName == "INPUT") && keybind_uppercase !== prev_key) {
-      emit("send_key_event", {event: "pressed", note: keybinds.indexOf(keybind_uppercase)})
+    if (keybinds.includes(keybind_uppercase) && check_input(ev) && keybind_uppercase !== prev_key) {
+      press_key(keybinds.indexOf(keybind_uppercase));
       prev_key = keybind_uppercase
     }
   })
   window.addEventListener("keyup", function(ev) {
     let keybind_uppercase = ev.key.toUpperCase()
 
-    if (keybinds.includes(keybind_uppercase) && !(ev.target.tagName == "INPUT")) {
-      emit("send_key_event", {event: "released", note: keybinds.indexOf(keybind_uppercase)})
+    if (keybinds.includes(keybind_uppercase) && check_input(ev)) {
+      release_key(keybinds.indexOf(keybind_uppercase))
       prev_key = ""
     }
   })
@@ -65,9 +81,10 @@ onMounted(init)
       <PianoKey
           v-for="(_, idx) in key_amt"
           :note="key_names[idx%(key_names.length)]"
-          @mousedown="$emit('send_key_event', {event: 'pressed', note: idx})"
-          @mouseup="$emit('send_key_event', {event: 'released', note: idx})"
-          @mouseleave="$emit('send_key_event', {event: 'released', note: idx})"
+          :is-down="computed(() => keysDown[idx] == true)"
+          @mousedown="press_key(idx)"
+          @mouseup="release_key(idx)"
+          @mouseleave="release_key(idx)"
       />
     </div>
   </div>
