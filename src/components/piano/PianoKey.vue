@@ -10,10 +10,12 @@ let debug = SettingsUtil.getRef("debug")
 
 <template>
   <div class="flex w-6 h-16 bg-white text-black min-w-1 justify-center items-center">
-    <p v-show="debug">{{ note }}</p>
+    <p class="note-name" v-show="debug">{{ note }}</p>
   </div>
 </template>
 
 <style scoped>
-
+  .note-name {
+    pointer-events: none;
+  }
 </style>
