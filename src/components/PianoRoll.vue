@@ -17,7 +17,7 @@ const emit = defineEmits({
 })
 
 const key_amt = ref<number>(0)
-const scale_selected = ref()
+const scale_selected = ref("none")
 
 const key_names = constants.SEMITONE_NAMES
 const keybinds = constants.KEYBINDS
@@ -88,8 +88,8 @@ onMounted(init)
       />
     </div>
     <select v-model="scale_selected" class="select select-bordered w-full max-w-xs">
-      <option selected>no scale highlight</option>
-      <option v-for="scale in constants.HEPTATONIC_SCALES">{{ scale.name }}</option>
+      <option value="none" selected>no scale highlight</option>
+      <option value="scale.name" v-for="scale in constants.HEPTATONIC_SCALES">{{ scale.name }}</option>
     </select>
   </div>
 </template>
