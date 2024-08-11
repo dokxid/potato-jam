@@ -10,7 +10,7 @@ let started = ref(false);
 
 function process_key(payload: { event: string, note: number }) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
-  soundHandler.play(payload.event, payload.note)
+  soundHandler.play(payload.event, payload.note, "meow")
 }
 
 function init() {
@@ -18,6 +18,7 @@ function init() {
 }
 
 async function initSoundHandler() {
+  await soundHandler.load_instrument_id("meow")
   await soundHandler.init()
   started.value = true
 }

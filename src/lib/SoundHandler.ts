@@ -1,16 +1,15 @@
 // i dont know what to name these help
 
 import * as Tone from "tone";
+import Instrument from "./Instruments"
 
 export default class SoundHandler {
     
-    player: Tone.Player
-    divisions: number
     loaded: boolean
+    instruments: Map<string, Instrument>
 
     constructor() {
-        this.player = new Tone.Player("src/assets/meow.ogg", onload=() => {this.set_loaded()}).toDestination();
-        this.divisions = 12
+        this.instruments = new Map<string, Instrument>()
         this.loaded = false
     }
 
@@ -18,32 +17,39 @@ export default class SoundHandler {
         await Tone.start()
     }
 
+    load_instrument(instrument: Instrument) {
+        this.instruments.set(instrument.id, instrument)
+    }
+    load_instrument_id(id: string) {
+        this.load_instrument(Instrument.idInstancer(id))
+    }
+    is_instrument_loaded(id: string): boolean {
+        return this.instruments.has(id)
+    }
+
     set_loaded() {
         this.loaded = true
     }
 
-    get_pitch(pitch: number) {
-        return 2**(pitch/this.divisions)
-    }
+    async play(event: string, pitch: number, id: string) {
+        console.log(this.is_instrument_loaded(id))
 
-    async play(event: string, pitch: number) {
-        console.log(this.loaded)
-        if (this.loaded) {
-            if (event === "pressed")
-                this.press(pitch)
-            else
-                this.release(pitch)
+        if (!this.is_instrument_loaded(id)) {
+            await this.load_instrument(Instrument.idInstancer(id))
         }
+        console.log(this.instruments.get(id))
+
+        if (event === "pressed")
+            this.press(pitch, id)
+        else
+            this.release(pitch, id)
     }
 
-    async press(pitch: number) {
-        this.player.playbackRate = this.get_pitch(pitch)
-        // this.player.stop()
-        await this.player.start()
+    async press(pitch: number, id: string) {
+        this.instruments.get(id)?.press(pitch)
     }
-    async release(pitch: number) {
-        await this.player.stop(this.get_pitch(pitch))
-        //await this.player.
+    async release(pitch: number, id: string) {
+        this.instruments.get(id)?.release(pitch)
     }
 
     
