@@ -72,7 +72,7 @@ function init() {
     let keybind_uppercase = ev.key.toUpperCase()
 
     if (keybinds.includes(keybind_uppercase) && check_input(ev) && keybind_uppercase !== prev_key) {
-      press_key(keybinds.indexOf(keybind_uppercase));
+      press_key(keybinds.indexOf(keybind_uppercase)+transpose_amt.value);
       prev_key = keybind_uppercase
     }
   })
@@ -80,7 +80,7 @@ function init() {
     let keybind_uppercase = ev.key.toUpperCase()
 
     if (keybinds.includes(keybind_uppercase) && check_input(ev)) {
-      release_key(keybinds.indexOf(keybind_uppercase))
+      release_key(keybinds.indexOf(keybind_uppercase)+transpose_amt.value)
       prev_key = ""
     }
   })
@@ -111,7 +111,7 @@ onMounted(init)
           @mouseleave="release_key(idx_trans(idx))"
       />
     </div>
-    <select v-model="scale_selected" class="select select-primary text-base-content w-full max-w-xs">
+    <select v-model="scale_selected" class="select select-bordered text-base-content w-full max-w-xs">
       <option
           :value="scale"
           v-for="scale in Object.keys(constants.SCALES)">{{ scale }}

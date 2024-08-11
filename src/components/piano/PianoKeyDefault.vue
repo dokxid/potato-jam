@@ -13,7 +13,7 @@ let debug = SettingsUtil.getRef("debug")
 const classObject = computed(() => ({
   'contrast-200': props.isDown.value,
   'brightness-50': !props.isDown.value && !props.highlighted,
-  'h-10': !props.highlighted,
+  'h-10 w-3': !props.highlighted,
   'brightness-150 h-16': props.highlighted,
 }))
 
