@@ -40,7 +40,7 @@ function process_key(payload: { event: string, note: number }) {
     </UIContainer>
 
     <UIContainer :title="'piano roll'" class="col-span-3">
-      <div class="flex container justify-center items-center" v-if="started">
+      <div class="flex container justify-center items-center" v-show="started">
         <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
       </div>
     </UIContainer>
