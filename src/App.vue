@@ -26,9 +26,9 @@ function process_key(payload: { event: string, note: number }) {
 
   <NavBar/>
 
-  <div class="container mx-auto grid grid-flow-row grid-cols-3 gap-4 py-5 items-center">
+  <div class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
 
-    <UIContainer :title="'networking'" class="col-span-2">
+    <UIContainer :title="'networking'" class="md:col-span-2">
       <NetTest/>
     </UIContainer>
 
@@ -39,8 +39,8 @@ function process_key(payload: { event: string, note: number }) {
       />
     </UIContainer>
 
-    <UIContainer :title="'piano roll'" class="col-span-3">
-      <div class="flex container justify-center items-center" v-show="started">
+    <UIContainer :title="'piano roll'" class="md:col-span-3">
+      <div class="flex container justify-start lg:justify-center items-center" v-show="started">
         <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
       </div>
     </UIContainer>
