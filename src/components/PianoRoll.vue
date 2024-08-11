@@ -1,8 +1,10 @@
 <script setup lang="ts">
+
 import SettingsUtil from "../lib/SettingsUtil";
 import PianoKey from "./piano/PianoKey.vue";
+import {constants} from "../data/constants.ts";
 
-import {computed, onMounted, Ref, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 // emits
 const emit = defineEmits({
@@ -15,13 +17,11 @@ const emit = defineEmits({
 })
 
 const key_amt = ref<number>(0)
-const key_names = [
-  // LOL? HARDCODED (；′⌒`)
-  "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+const scale_selected = ref()
+const keybinds = [ // they got that uauuigug au ui i o[] <-- 😭
+  "A", "W", "S", "E", "D", "F", "T", "G", "Y", "H", "U", "J"
 ]
-const keybinds = [ // they got that uauuigug au ui i o[]
-  "A", "W",  "S", "E",  "D", "F", "T",  "G", "Y",  "H", "U", "J"
-]
+const key_names = constants.SEMITONE_NAMES
 
 let prev_key = ""
 
@@ -35,15 +35,16 @@ function calculate_keys() {
   }
 }
 
-const keysDown: Ref<{[note: number]: boolean}> = ref({})
+const keysDown: Ref<{ [note: number]: boolean }> = ref({})
 
 function press_key(note: number) {
-  emit("send_key_event", {event: "pressed", note })
+  emit("send_key_event", {event: "pressed", note})
   keysDown.value[note] = true;
 
 }
+
 function release_key(note: number) {
-  emit("send_key_event", {event: "released", note })
+  emit("send_key_event", {event: "released", note})
   delete keysDown.value[note];
 }
 
@@ -52,7 +53,7 @@ function check_input(ev: KeyboardEvent) {
 }
 
 function init() {
-  window.addEventListener("keydown", function(ev) {
+  window.addEventListener("keydown", function (ev) {
     let keybind_uppercase = ev.key.toUpperCase()
 
     if (keybinds.includes(keybind_uppercase) && check_input(ev) && keybind_uppercase !== prev_key) {
@@ -60,7 +61,7 @@ function init() {
       prev_key = keybind_uppercase
     }
   })
-  window.addEventListener("keyup", function(ev) {
+  window.addEventListener("keyup", function (ev) {
     let keybind_uppercase = ev.key.toUpperCase()
 
     if (keybinds.includes(keybind_uppercase) && check_input(ev)) {
@@ -75,7 +76,7 @@ onMounted(init)
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col space-y-4">
     <p><i>note: this currently only does absolute display</i></p>
     <div class="flex flex-row space-x-1 justify-center">
       <PianoKey
@@ -87,6 +88,10 @@ onMounted(init)
           @mouseleave="release_key(idx)"
       />
     </div>
+    <select v-model="scale_selected" class="select select-bordered w-full max-w-xs">
+      <option selected>no scale highlight</option>
+      <option v-for="scale in constants.HEPTATONIC_SCALES">{{ scale.name }}</option>
+    </select>
   </div>
 </template>
 
