@@ -26,7 +26,7 @@ watch(sound_event, async (new_sound_event: Object) => {
 })
 
 async function read_file(files) {
-  file = await files.item(0).text()
+  file = await files.item(0).type
 }
 
 async function initSoundHandler() {
@@ -49,19 +49,28 @@ onMounted(() => init())
 
 <template>
   <div class="flex flex-col gap-3">
-    <div class="space-x-2">
+    <div>
+      <h3>general settings</h3>
       <button
           class="btn btn-primary"
           v-if="!started"
           @click="initSoundHandler"
-      > Click to start audio </button>
-      <button class="btn btn-primary" :disabled="!file_loaded">select file</button>
+      > Click to start audio
+      </button>
     </div>
-    <input type="file" @change="(e) => {read_file(e.target.files); file_loaded = true }" class="file-input file-input-bordered w-full max-w-xs"/>
     <div>
-      {{ file }}
+      <h3>sample settings</h3>
+      <div class="flex flex-row space-x-2">
+        <input type="file" @change="(e) => {read_file(e.target.files); file_loaded = true }"
+               class="file-input file-input-bordered w-full max-w-xs"/>
+        <button class="btn btn-primary shrink" :disabled="!file_loaded">apply</button>
+      </div>
+      <div v-show="file_loaded">
+        {{ "loaded type: " + file }}
+      </div>
     </div>
-    <div class="">
+    <div>
+      <h3>instrument settings</h3>
       <InstrumentSwitcher
           @update_instrument="update_instrument"
           v-model="instrument_selected"
@@ -72,5 +81,7 @@ onMounted(() => init())
 </template>
 
 <style scoped>
-
+h3 {
+  @apply text-lg mb-2
+}
 </style>
