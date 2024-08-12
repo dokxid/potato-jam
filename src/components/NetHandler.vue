@@ -64,6 +64,7 @@ async function init() {
 // When a key is pressed by the user
 function process_payload(payload: NoteEventPayload) {
     if(processingRef.value == null) return;
+    // console.log(payload.id)
     processingRef.value.sendNotePayload(payload);
 }
 
