@@ -8,7 +8,7 @@ const sub_pages = ["view 1", "view 2"]
 </script>
 
 <template>
-  <div class="navbar bg-base-100">
+  <div class="navbar py-5 bg-base-100 container mx-auto [--navbar-padding:0]">
     <div class="navbar-start">
       <div class="dropdown">
         <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
