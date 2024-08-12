@@ -40,12 +40,14 @@ function calculate_keys() {
 const keysDown = ref<{ [note: number]: boolean }>({})
 
 function press_key(note: number) {
+  if(keysDown.value[note]) return;
   emit("send_key_event", {event: "pressed", note})
   keysDown.value[note] = true;
 
 }
 
 function release_key(note: number) {
+  if(!keysDown.value[note]) return;
   emit("send_key_event", {event: "released", note})
   delete keysDown.value[note];
 }
@@ -72,9 +74,8 @@ function init() {
   window.addEventListener("keydown", function (ev) {
     let keybind_uppercase = ev.key.toUpperCase()
 
-    if (keybinds.includes(keybind_uppercase) && check_input(ev) && keybind_uppercase !== prev_key) {
+    if (keybinds.includes(keybind_uppercase) && check_input(ev)) {
       press_key(keybinds.indexOf(keybind_uppercase)+transpose_amt.value);
-      prev_key = keybind_uppercase
     }
   })
   window.addEventListener("keyup", function (ev) {
@@ -82,7 +83,6 @@ function init() {
 
     if (keybinds.includes(keybind_uppercase) && check_input(ev)) {
       release_key(keybinds.indexOf(keybind_uppercase)+transpose_amt.value)
-      prev_key = ""
     }
   })
   calculate_keys()
