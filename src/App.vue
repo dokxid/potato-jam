@@ -5,7 +5,7 @@ import {ref} from "vue";
 
 // component imports
 import UIContainer from "./components/ui/UIContainer.vue";
-import PianoRoll from "./components/PianoRoll.vue";
+import PianoRoll from "./components/piano/PianoRoll.vue";
 import NavBar from "./components/NavBar.vue";
 import NetHandler from "./components/NetHandler.vue";
 import InstrumentUI from "./components/InstrumentUI.vue";
@@ -38,36 +38,48 @@ async function initSoundHandler() {
 
 <template>
 
-  <NavBar/>
-  <div class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
-    <!-- pls someone somehow center this -->
-    <button
-          class="btn btn-primary w-full"
-          v-if="!started"
-          @click="initSoundHandler"> 
-    Click to start audio
-    </button>
-  </div>
+  <div class="flex flex-col h-lvh" >
+    <NavBar class="grow-0"/>
 
-  <div v-if="started" class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
-
-    <UIContainer :title="'lobby'" class="md:col-span-2">
-      <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
-    </UIContainer>
-
-    <UIContainer :title="'instrument'">
-      <!-- v-model="sound_events"  -->
-      <InstrumentUI
-          @sound_handler_initialized="started = true"
-      />
-    </UIContainer>
-
-    <UIContainer :title="'piano roll'" class="md:col-span-3">
-      <div class="flex container justify-start lg:justify-center items-center" v-show="started">
-        <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+    <div class="grow">
+      <div v-show="!started" class="flex bg-base-200 h-full bg-opacity-50 justify-center items-center">
+        <div class="flex flex-col gap-10 items-center">
+          <h1 class="text-5xl font-semibold"><b class="font-extrabold bg-gradient-to-br from-primary to-secondary text-primary-content px-5">potato jam!!</b> YEY</h1>
+          <button
+              class="btn btn-primary bg-gradient-to-br from-primary to-secondary hover:brightness-150 w-full max-w-lg"
+              v-if="!started"
+              @click="initSoundHandler">
+            click me to open lobby
+          </button>
+          <div class="w-full items-start">
+            <p class="text-xs font-mono">note: this will play audio,,,</p>
+            <p class="text-xs font-mono">repo:
+              <a href="https://github.com/dokxid/potato-jam" class="underline">github.com/dokxid/potato-jam</a>
+            </p>
+          </div>
+        </div>
       </div>
-    </UIContainer>
 
+      <div v-if="started"
+           class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
+
+        <UIContainer :title="'lobby'" class="md:col-span-2">
+          <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
+        </UIContainer>
+
+        <UIContainer :title="'instrument'">
+          <!-- v-model="sound_events"  -->
+          <InstrumentUI
+              @sound_handler_initialized="started = true"
+          />
+        </UIContainer>
+
+        <UIContainer :title="'piano roll'" class="md:col-span-3">
+          <div class="flex container justify-start lg:justify-center items-center" v-show="started">
+            <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+          </div>
+        </UIContainer>
+      </div>
+    </div>
   </div>
-
 </template>

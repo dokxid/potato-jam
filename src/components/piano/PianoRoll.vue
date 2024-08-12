@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-import SettingsUtil from "../lib/SettingsUtil";
-import PianoKeyDefault from "./piano/PianoKeyDefault.vue";
-import {constants} from "../data/constants.ts";
+import SettingsUtil from "../../lib/SettingsUtil.ts";
+import PianoKeyDefault from "./PianoKeyDefault.vue";
+import {constants} from "../../data/constants.ts";
 
 import {computed, onMounted, ref, watch} from "vue";
-import { NoteEventPayload } from "../lib/SoundHandler.ts";
+import { NoteEventPayload } from "../../lib/SoundHandler.ts";
 
 // emits
 const emit = defineEmits({
