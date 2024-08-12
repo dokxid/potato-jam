@@ -22,11 +22,13 @@ type ServerStatePayload = {
     connected: PotatoUser[],
 }
 
+type ServerNotePayload = ClientPayloadData<ClientPayloadType.NOTE_PAYLOAD> & IdentifiedPayload
+
 export type ServerPayloadData<T extends ServerPayloadType> = 
     T extends ServerPayloadType.NEW_CONNECTION ? ServerNewConnectionPayload
     : T extends ServerPayloadType.CONNECTION_ACCEPTED ? ServerStatePayload
     : T extends ServerPayloadType.REMOVED_CONNECTION ? IdentifiedPayload
-    : T extends ServerPayloadType.NOTE_PAYLOAD ? ClientPayloadData<ClientPayloadType.NOTE_PAYLOAD>
+    : T extends ServerPayloadType.NOTE_PAYLOAD ? ServerNotePayload
     : undefined
 
 /**
@@ -161,7 +163,9 @@ export default class PotatoServer {
         },
         [ClientPayloadType.NOTE_PAYLOAD]: (id, payload) => {
             // todo: please check payload.data to protect against EVIl people!!
-            this.broadcastExcept(id, ServerPayloadType.NOTE_PAYLOAD, payload.data);
+            let data = payload.data as ServerNotePayload
+            data.id = id;
+            this.broadcastExcept(id, ServerPayloadType.NOTE_PAYLOAD, data);
         }
     }
 
