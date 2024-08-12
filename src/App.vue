@@ -5,6 +5,7 @@ import {ref} from "vue";
 
 // component imports
 import UIContainer from "./components/ui/UIContainer.vue";
+import UIAddContainer from "./components/ui/UIAddContainer.vue";
 import PianoRoll from "./components/piano/PianoRoll.vue";
 import NavBar from "./components/NavBar.vue";
 import NetHandler from "./components/NetHandler.vue";
@@ -65,6 +66,9 @@ async function initSoundHandler() {
             <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
           </div>
         </UIContainer>
+
+        <UIAddContainer class="md:col-span-3" />
+
       </div>
     </div>
   </div>

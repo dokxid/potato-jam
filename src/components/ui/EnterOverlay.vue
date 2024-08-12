@@ -12,7 +12,7 @@ const emit = defineEmits(['initSoundHandler'])
       <button
           class="btn btn-gradient h-16 rounded-full w-52 max-w-lg font-bold"
           @click="$emit('initSoundHandler')">
-        open lobby,,,
+        open lobby ➜
       </button>
       <div class="w-full items-start">
         <p class="text-xs font-mono">note: this will play audio,,,</p>
