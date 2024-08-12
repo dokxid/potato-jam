@@ -13,12 +13,16 @@ import SoundHandler from "./lib/SoundHandler";
 
 // refs
 const started = ref<boolean>(false)
-const sound_event = ref<Object>()
+const sound_events = ref<Object[]>([])
+const InstrumentUI_ref = ref<typeof InstrumentUI>()
+
 
 // functions
 function process_key(payload: { event: string, note: number }) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
-  sound_event.value = {event: payload.event, note: payload.note}
+
+  sound_events.value?.push({event: payload.event, note: payload.note})
+  InstrumentUI_ref.value?.process_sound_events()
 }
 
 async function initSoundHandler() {
@@ -49,7 +53,8 @@ async function initSoundHandler() {
 
     <UIContainer :title="'instrument'">
       <InstrumentUI
-          v-model="sound_event"
+          ref="InstrumentUI_ref"
+          v-model="sound_events"
           @sound_handler_initialized="started = true"
       />
     </UIContainer>
