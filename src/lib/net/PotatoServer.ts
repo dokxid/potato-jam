@@ -48,8 +48,8 @@ type ServerConnectionInfo = {
     user?: PotatoUser;
 }
 
-const LOCAL_CLIENT_ID = "localPotatoClient";
-const LOCAL_SERVER_ID = "localPotatoServer";
+export const LOCAL_CLIENT_ID = "localPotatoClient";
+export const LOCAL_SERVER_ID = "localPotatoServer";
 export default class PotatoServer {
     peer: Peer;
     connections: {[id: PotatoPeerId]: ServerConnectionInfo};
