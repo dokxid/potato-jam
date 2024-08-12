@@ -53,7 +53,7 @@ async function init() {
             if(!processing.accepted) {
                 panic("Server did not respond!");
             }
-        }, 2000)
+        }, 10000)
         processing.once("accepted", () => accepted())
     } else {
         accepted()
