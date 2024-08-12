@@ -2,13 +2,13 @@
 
 import InstrumentSwitcher from "./InstrumentSwitcher.vue";
 import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
-import {onMounted, ref } from "vue";
+import {onMounted, ref, watch} from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";
 
 // let sound_events = defineModel<NoteEventPayload[]>()
 
 let soundHandler: SoundHandler;
-let instrument_selected: string = "meow"
+let instrument_selected = ref<string>("meow")
 
 const file_loaded = ref<boolean>(false)
 let file = ""
@@ -17,7 +17,7 @@ let file = ""
 const emit = defineEmits(['sound_handler_initialized'])
 
 async function process_sound_events(note_event: NoteEventPayload) {
-  soundHandler.play(note_event.event, note_event.note, instrument_selected)
+  await soundHandler.play(note_event.event, note_event.note, instrument_selected.value)
 }
 
 MainEventHandler.on("notePayload", process_sound_events)
@@ -26,13 +26,13 @@ async function read_file(files: any) {
   file = await files.item(0).type
 }
 
-async function update_instrument() {
-  await soundHandler.load_instrument_id(instrument_selected)
-}
+watch(instrument_selected, (new_instrument) => {
+  soundHandler.load_instrument_id(new_instrument)
+})
 
 async function init() {
   soundHandler = new SoundHandler()
-  await soundHandler.load_instrument_id("meow")
+  soundHandler.load_instrument_id(instrument_selected.value)
   emit('sound_handler_initialized')
 }
 
@@ -44,7 +44,8 @@ onMounted(() => init())
   <div class="flex flex-col gap-3">
     <div>
       <h3>general settings</h3>
-      
+      <p>{{instrument_selected}}</p>
+
     </div>
     <div>
       <h3>sample settings</h3>
@@ -60,7 +61,6 @@ onMounted(() => init())
     <div>
       <h3>instrument settings</h3>
       <InstrumentSwitcher
-          @update_instrument="update_instrument"
           v-model="instrument_selected"
           class="fixed-bottom select select-bordered w-full text-base-content"
       />
