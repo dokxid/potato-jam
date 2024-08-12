@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
 import InstrumentSwitcher from "./InstrumentSwitcher.vue";
-import SoundHandler from "../lib/SoundHandler.ts";
+import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
 import {onMounted, ref, watch} from "vue";
 
-let sound_events = defineModel()
+let sound_events = defineModel<NoteEventPayload[]>()
 
-let started = ref(false);
 let soundHandler: SoundHandler;
 let instrument_selected: string = "meow"
 
@@ -20,51 +19,34 @@ defineExpose({
   process_sound_events
 })
 
-/*watch(sound_events, async (new_sound_events: Array<Object>) => {
-  console.log(sound_events, new_sound_events)
-  try {
-    for (const note_event of new_sound_events) {
-      await soundHandler.play(note_event.event, note_event.note, instrument_selected)
-      sound_events.shift()
-    }
-  } catch (e) {
-    console.log('HELLO!')
-    console.error(e)
-  }
-})*/
-
 async function process_sound_events() {
-  let new_sound_events = sound_events.value?.map((x) => x);
-
-  console.log(sound_events, new_sound_events)
-
+  let new_sound_events = sound_events.value
+  if(new_sound_events === undefined) return;
   try {
+    let promises = []
     for (const note_event of new_sound_events) {
-      await soundHandler.play(note_event.event, note_event.note, instrument_selected)
+      promises.push(soundHandler.play(note_event.event, note_event.note, instrument_selected))
       sound_events.value?.shift()
     }
+    await Promise.allSettled(promises);
   } catch (e) {
     console.log('HELLO!')
     console.error(e)
   }
 }
 
-async function read_file(files) {
+async function read_file(files: any) {
   file = await files.item(0).type
-}
-
-async function initSoundHandler() {
-  await soundHandler.load_instrument_id("meow")
-  await soundHandler.init()
-  emit('sound_handler_initialized')
 }
 
 async function update_instrument() {
   await soundHandler.load_instrument_id(instrument_selected)
 }
 
-function init() {
+async function init() {
   soundHandler = new SoundHandler()
+  await soundHandler.load_instrument_id("meow")
+  emit('sound_handler_initialized')
 }
 
 onMounted(() => init())
@@ -75,17 +57,12 @@ onMounted(() => init())
   <div class="flex flex-col gap-3">
     <div>
       <h3>general settings</h3>
-      <button
-          class="btn btn-primary w-full"
-          v-if="!started"
-          @click="initSoundHandler"
-      > Click to start audio
-      </button>
+      
     </div>
     <div>
       <h3>sample settings</h3>
       <div class="flex flex-row space-x-2">
-        <input type="file" @change="(e) => {read_file(e.target.files); file_loaded = true }"
+        <input type="file" @change="(e) => {read_file((e.target as HTMLInputElement).files); file_loaded = true }"
                class="file-input file-input-primary w-full text-base-content"/>
         <button class="btn btn-primary shrink" v-show="file_loaded">apply</button>
       </div>

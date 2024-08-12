@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "eventemitter3": "^5.0.1",
     "peerjs": "^1.5.4",
     "vue": "^3.4.35"
   },

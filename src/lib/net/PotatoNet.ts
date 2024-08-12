@@ -14,12 +14,23 @@ export type PotatoUser = {
     display_name: string,
     /** Image URL */
     icon: string,
-    /** Hex */
+    /** A valid css color */
     color: string,
 }
 
 export type IdentifiedPayload = {
     id: PotatoPeerId
+}
+
+function dec2hex (dec: number) {
+    return dec.toString(16).padStart(2, "0")
+}
+
+const potato = ["jam", "milk", "meatball", "pizza", "casserole", "salad", "hash", "beef", "dinner", "cake", "pancakes", "chili", "pie", "soup", "fries", "steak", "rolls", "starch", "gaming", "music"]
+function generateId(): PotatoPeerId {
+    var arr = new Uint8Array((8) / 2)
+    window.crypto.getRandomValues(arr)
+    return `potato-${potato[arr[0] % potato.length]}-${Array.from(arr, dec2hex).join('')}`
 }
 
 export default class PotatoNet {
@@ -29,10 +40,13 @@ export default class PotatoNet {
     static client?: PotatoClient;
 
     static init() {
-        this.peer = new Peer();
-        this.peer.on("open", (id) => {
-            this.id.value = id;
-        });
+        return new Promise<void>((res) => {
+            this.peer = new Peer(generateId());
+            this.peer.on("open", (id) => {
+                this.id.value = id;
+                res();
+            });
+        })
     }
     static initServer() {
         this.server = new PotatoServer(this.peer);

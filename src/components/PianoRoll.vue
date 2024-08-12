@@ -5,10 +5,11 @@ import PianoKeyDefault from "./piano/PianoKeyDefault.vue";
 import {constants} from "../data/constants.ts";
 
 import {computed, onMounted, ref, watch} from "vue";
+import { NoteEventPayload } from "../lib/SoundHandler.ts";
 
 // emits
 const emit = defineEmits({
-  send_key_event(payload: { event: string, note: number }) {
+  send_key_event(payload: NoteEventPayload) {
     if (SettingsUtil.get('debug')) {
       console.log(payload)
     }
