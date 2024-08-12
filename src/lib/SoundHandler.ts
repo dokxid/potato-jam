@@ -3,6 +3,8 @@
 import * as Tone from "tone";
 import Instrument from "./Instruments"
 
+export type NoteEventPayload = { event: string, note: number }
+
 export default class SoundHandler {
 
     loaded: boolean

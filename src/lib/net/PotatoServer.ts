@@ -10,6 +10,8 @@ export enum ServerPayloadType {
     CONNECTION_ACCEPTED = "CONNECTION_ACCEPTED",
     /** S2B: Sent to all clients when a client disconnects */
     REMOVED_CONNECTION = "REMOVED_CONNECTION",
+    /** S2B: Echoes a client's NOTE_PAYLOAD */
+    NOTE_PAYLOAD = "NOTE_PAYLOAD"
 }
 
 type ServerNewConnectionPayload = IdentifiedPayload & {
@@ -24,6 +26,7 @@ export type ServerPayloadData<T extends ServerPayloadType> =
     T extends ServerPayloadType.NEW_CONNECTION ? ServerNewConnectionPayload
     : T extends ServerPayloadType.CONNECTION_ACCEPTED ? ServerStatePayload
     : T extends ServerPayloadType.REMOVED_CONNECTION ? IdentifiedPayload
+    : T extends ServerPayloadType.NOTE_PAYLOAD ? ClientPayloadData<ClientPayloadType.NOTE_PAYLOAD>
     : undefined
 
 /**
@@ -155,6 +158,10 @@ export default class PotatoServer {
     payload_funs: {[T in ClientPayloadType]: (id: PotatoPeerId, payload: ClientPayload<T>) => void} = {
         [ClientPayloadType.IDENTIFY]: (id, payload) => {
             this.openConnection(id, payload.data);
+        },
+        [ClientPayloadType.NOTE_PAYLOAD]: (id, payload) => {
+            // todo: please check payload.data to protect against EVIl people!!
+            this.broadcastExcept(id, ServerPayloadType.NOTE_PAYLOAD, payload.data);
         }
     }
 

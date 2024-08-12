@@ -5,15 +5,19 @@ import { Optional } from "../TypeUtil";
 import SettingsUtil from "../SettingsUtil";
 import { reactive } from "vue";
 import EventEmitter from "eventemitter3";
+import { NoteEventPayload } from "../SoundHandler";
 
 // Please make K=V in this enum!!
 export enum ClientPayloadType {
     /** C2S: Sent to the server to give it information about the client */
     IDENTIFY = "IDENTIFY",
+    /** C2B: Sent to all clients when a note is pressed/released */
+    NOTE_PAYLOAD = "NOTE_PAYLOAD"
 }
 
 export type ClientPayloadData<T extends ClientPayloadType> = 
     T extends ClientPayloadType.IDENTIFY ? Optional<PotatoUser, "id">
+    : T extends ClientPayloadType.NOTE_PAYLOAD ? NoteEventPayload
     : undefined
 
 /**
@@ -29,6 +33,7 @@ type PotatoClientEvents = {
     "connectionClosed": () => {}
     "connectionOpen": () => {}
     "accepted": () => {}
+    "notePayload": (event: NoteEventPayload) => {}
 }
 export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
     connected: {[id: PotatoPeerId]: PotatoUser};
@@ -65,6 +70,10 @@ export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
         })
     }
 
+    async sendNotePayload(event: NoteEventPayload) {
+        await this.send(ClientPayloadType.NOTE_PAYLOAD, event);
+    }
+
     payload_funs: {[T in ServerPayloadType]: (payload: ServerPayload<T>) => void} = {
         [ServerPayloadType.CONNECTION_ACCEPTED]: (payload) => {
             for(let user of payload.data.connected) {
@@ -78,6 +87,9 @@ export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
         },
         [ServerPayloadType.REMOVED_CONNECTION]: (payload) => {
             delete this.connected[payload.data.id];
+        },
+        [ServerPayloadType.NOTE_PAYLOAD]: (payload) => {
+            this.emit("notePayload", payload.data)
         }
     }
 
