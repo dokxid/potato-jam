@@ -58,7 +58,7 @@ export class meow extends Instrument {
                 C4: "meow.ogg",
             },
             release: 1,
-            baseUrl: "src/assets/",
+            baseUrl: "/potato-jam/",
             onload: () => {
                 this.unlock()
             }
