@@ -41,7 +41,19 @@ export default class PotatoNet {
 
     static init() {
         return new Promise<void>((res) => {
-            this.peer = new Peer(generateId());
+            this.peer = new Peer(generateId(), {
+                config: {
+                    iceServers: [
+                        { urls: "stun:stun.l.google.com:19302" },
+                        {
+                            urls: 'turn:openrelay.metered.ca:80',
+                            username: 'openrelayproject',
+                            credential: 'openrelayproject'
+                        }                    
+                    ],
+                    sdpSemantics: "unified-plan"
+                }
+            });
             this.peer.on("open", (id) => {
                 this.id.value = id;
                 res();
