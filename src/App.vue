@@ -12,10 +12,9 @@ import InstrumentUI from "./components/InstrumentUI.vue";
 
 // refs
 const started = ref<boolean>(false)
-let sound_events = ref<Array<Object>>()
-let InstrumentUI_ref = ref<Object>()
+const sound_events = ref<Object[]>([])
+const InstrumentUI_ref = ref<typeof InstrumentUI>()
 
-sound_events.value = Array<Object>()
 
 // functions
 function process_key(payload: { event: string, note: number }) {
