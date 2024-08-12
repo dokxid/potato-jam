@@ -12,12 +12,17 @@ import InstrumentUI from "./components/InstrumentUI.vue";
 
 // refs
 const started = ref<boolean>(false)
-const sound_event = ref<Object>()
+let sound_events = ref<Array<Object>>()
+let InstrumentUI_ref = ref<Object>()
+
+sound_events.value = Array<Object>()
 
 // functions
 function process_key(payload: { event: string, note: number }) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
-  sound_event.value = {event: payload.event, note: payload.note}
+
+  sound_events.value?.push({event: payload.event, note: payload.note})
+  InstrumentUI_ref.value?.process_sound_events()
 }
 
 </script>
@@ -34,7 +39,8 @@ function process_key(payload: { event: string, note: number }) {
 
     <UIContainer :title="'instrument'">
       <InstrumentUI
-          v-model="sound_event"
+          ref="InstrumentUI_ref"
+          v-model="sound_events"
           @sound_handler_initialized="started = true"
       />
     </UIContainer>

@@ -4,7 +4,7 @@ import InstrumentSwitcher from "./InstrumentSwitcher.vue";
 import SoundHandler from "../lib/SoundHandler.ts";
 import {onMounted, ref, watch} from "vue";
 
-const sound_event = defineModel()
+let sound_events = defineModel()
 
 let started = ref(false);
 let soundHandler: SoundHandler;
@@ -16,14 +16,38 @@ let file = ""
 // emits
 const emit = defineEmits(['sound_handler_initialized'])
 
-watch(sound_event, async (new_sound_event: Object) => {
+defineExpose({
+  process_sound_events
+})
+
+/*watch(sound_events, async (new_sound_events: Array<Object>) => {
+  console.log(sound_events, new_sound_events)
   try {
-    await soundHandler.play(new_sound_event.event, new_sound_event.note, instrument_selected)
+    for (const note_event of new_sound_events) {
+      await soundHandler.play(note_event.event, note_event.note, instrument_selected)
+      sound_events.shift()
+    }
   } catch (e) {
     console.log('HELLO!')
     console.error(e)
   }
-})
+})*/
+
+async function process_sound_events() {
+  let new_sound_events = sound_events.value?.map((x) => x);
+
+  console.log(sound_events, new_sound_events)
+
+  try {
+    for (const note_event of new_sound_events) {
+      await soundHandler.play(note_event.event, note_event.note, instrument_selected)
+      sound_events.value?.shift()
+    }
+  } catch (e) {
+    console.log('HELLO!')
+    console.error(e)
+  }
+}
 
 async function read_file(files) {
   file = await files.item(0).type
