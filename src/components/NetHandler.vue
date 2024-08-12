@@ -16,7 +16,7 @@ let processingRef: Ref<PotatoClientProcessing | null> = ref(null)
 
 function panic(msg: string) {
     console.warn(msg) // This should be shown to the user somehow after the location is replaced,,
-    window.location.replace("");
+    window.location.replace(window.location.pathname);
 }
 
 async function accepted() {
