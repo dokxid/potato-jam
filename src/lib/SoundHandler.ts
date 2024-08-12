@@ -13,7 +13,7 @@ export default class SoundHandler {
         this.loaded = false
     }
 
-    async init() {
+    static async init() {
         await Tone.start()
     }
 

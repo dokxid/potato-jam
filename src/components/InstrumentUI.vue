@@ -6,7 +6,6 @@ import {onMounted, ref, watch} from "vue";
 
 const sound_event = defineModel()
 
-let started = ref(false);
 let soundHandler: SoundHandler;
 let instrument_selected: string = "meow"
 
@@ -29,18 +28,14 @@ async function read_file(files) {
   file = await files.item(0).type
 }
 
-async function initSoundHandler() {
-  await soundHandler.load_instrument_id("meow")
-  await soundHandler.init()
-  emit('sound_handler_initialized')
-}
-
 async function update_instrument() {
   await soundHandler.load_instrument_id(instrument_selected)
 }
 
-function init() {
+async function init() {
   soundHandler = new SoundHandler()
+  await soundHandler.load_instrument_id("meow")
+  emit('sound_handler_initialized')
 }
 
 onMounted(() => init())
@@ -51,12 +46,7 @@ onMounted(() => init())
   <div class="flex flex-col gap-3">
     <div>
       <h3>general settings</h3>
-      <button
-          class="btn btn-primary w-full"
-          v-if="!started"
-          @click="initSoundHandler"
-      > Click to start audio
-      </button>
+      
     </div>
     <div>
       <h3>sample settings</h3>

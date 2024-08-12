@@ -1,6 +1,6 @@
 import Peer, { DataConnection } from "peerjs"
 import { IdentifiedPayload, PotatoPeerId, PotatoUser } from "./PotatoNet"
-import { ClientPayload, ClientPayloadData, ClientPayloadType } from "./PotatoClient"
+import PotatoClient, { ClientPayload, ClientPayloadData, ClientPayloadType, PotatoClientProcessing } from "./PotatoClient"
 
 // Please make K=V in this enum!!
 export enum ServerPayloadType {
@@ -35,19 +35,27 @@ export type ServerPayload<T extends ServerPayloadType> = {
 }
 
 type ServerConnectionInfo = {
-    connection: DataConnection;
+    connection?: DataConnection;
     user?: PotatoUser;
 }
 
+const LOCAL_CLIENT_ID = "localPotatoClient";
+const LOCAL_SERVER_ID = "localPotatoServer";
 export default class PotatoServer {
     peer: Peer;
     connections: {[id: PotatoPeerId]: ServerConnectionInfo};
+    localClient: PotatoClientProcessing;
 
     constructor(peer: Peer) {
         this.peer = peer;
         this.connections = {};
         this.peer.on("connection", (conn) => {
             const id = conn.peer;
+            if(id == LOCAL_CLIENT_ID) {
+                console.warn(`Evil connection trying to be the local client!!`)
+                conn.close();
+                return;
+            }
             console.log("Got connection from " + id)
             conn.on("data", (data) => {
                 this.processData(id, data)
@@ -63,6 +71,15 @@ export default class PotatoServer {
                 };
             })
         })
+        let localClient = new PotatoClientProcessing(LOCAL_SERVER_ID, LOCAL_CLIENT_ID, async (type, data) => {
+            let payload: ClientPayload<typeof type> = {
+                type, data
+            } 
+            return this.processData(LOCAL_CLIENT_ID, payload);
+        })
+        this.localClient = localClient;
+        this.connections[LOCAL_CLIENT_ID] = {}
+        this.localClient.openConnection();
     }
 
     async send<T extends ServerPayloadType>(id: PotatoPeerId, type: T, data: ServerPayloadData<T>) {
@@ -75,7 +92,12 @@ export default class PotatoServer {
             type,
             data
         }
-        await peer.connection.send(payload);
+        if(id == LOCAL_CLIENT_ID) {
+            this.localClient.processData(payload);
+            return true;
+        }
+        // pls only non nullable after you've checked for local client :)
+        await (peer.connection as NonNullable<typeof peer["connection"]>).send(payload);
         return true;
     }
 
