@@ -4,6 +4,7 @@ export const DEFAULT_SETTINGS = {
     note_min: 0,
     note_max: 36,
     piano_roll_mode: "default",
+    local_mode: false,
     debug: false,
 
     user: {

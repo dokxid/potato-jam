@@ -5,6 +5,9 @@ import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
 import { NoteEventPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
+import SettingsUtil from "../lib/SettingsUtil.ts";
+
+let local_mode = SettingsUtil.get('local_mode')
 
 let props = defineProps<{
     push_payload: (payload: NoteEventPayload | ServerNotePayload) => void
@@ -37,7 +40,7 @@ let client: PotatoClient | undefined;
 async function init() {
     if(processingRef.value) return;
     await PotatoNet.init();
-    if(urlRoom === "") {
+    if(urlRoom === "" || local_mode) {
         server = await PotatoNet.initServer();
         urlRoom = server.peer.id;
         processingRef.value = server.localClient;
