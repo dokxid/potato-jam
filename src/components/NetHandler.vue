@@ -25,7 +25,7 @@ async function accepted() {
         return panic("Accepted without processing?!?!")
     }
     roomId.value = urlRoom
-    window.history.replaceState(roomId.value, roomId.value, `./?room=${roomId.value}`)
+    window.history.replaceState(roomId.value, roomId.value, `?room=${roomId.value}`)
     processing.on("notePayload", (event) => {
         props.push_payload(event);
     })
