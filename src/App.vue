@@ -15,9 +15,6 @@ import MainEventHandler from "./lib/MainEventHandler";
 // refs
 const started = ref<boolean>(false)
 // const sound_events = reactive<NoteEventPayload[]>([])
-const InstrumentUI_ref = ref<InstanceType<typeof InstrumentUI>>();
-const NetHandler_ref = ref<InstanceType<typeof NetHandler>>();
-
 
 // functions
 function push_payload(payload: NoteEventPayload) {
@@ -29,7 +26,7 @@ function push_payload(payload: NoteEventPayload) {
 // This one must only be called when the user produces the input, not any remote
 function process_key(payload: NoteEventPayload) {
   push_payload(payload);
-  NetHandler_ref.value?.process_payload(payload);
+  MainEventHandler.sendUserNotePayload(payload);
 }
 
 async function initSoundHandler() {
@@ -61,7 +58,6 @@ async function initSoundHandler() {
     <UIContainer :title="'instrument'">
       <!-- v-model="sound_events"  -->
       <InstrumentUI
-          ref="InstrumentUI_ref"
           @sound_handler_initialized="started = true"
       />
     </UIContainer>

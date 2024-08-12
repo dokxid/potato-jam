@@ -4,6 +4,7 @@ import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer from '../lib/net/PotatoServer';
 import { NoteEventPayload } from '../lib/SoundHandler';
+import MainEventHandler from '../lib/MainEventHandler';
 
 let props = defineProps<{
     push_payload: (payload: NoteEventPayload) => void
@@ -66,9 +67,7 @@ function process_payload(payload: NoteEventPayload) {
     processingRef.value.sendNotePayload(payload);
 }
 
-defineExpose({
-    process_payload
-})
+MainEventHandler.on("userNotePayload", process_payload)
 
 async function unmounted() {
     if(server) {
