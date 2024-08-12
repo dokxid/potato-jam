@@ -2,7 +2,7 @@
 
 import InstrumentSwitcher from "./InstrumentSwitcher.vue";
 import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref } from "vue";
 
 let sound_events = defineModel<NoteEventPayload[]>()
 

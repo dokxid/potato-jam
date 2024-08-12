@@ -12,7 +12,7 @@ let url = new URL(window.location.href)
 let urlRoom = url.searchParams.get("room") || "";
 let roomId = ref("");
 let processingRef: Ref<PotatoClientProcessing | null> = ref(null)
-let connectId = ref("");
+// let connectId = ref("");
 
 function panic(msg: string) {
     console.warn(msg) // This should be shown to the user somehow after the location is replaced,,

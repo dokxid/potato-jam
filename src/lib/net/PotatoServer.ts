@@ -1,6 +1,6 @@
 import Peer, { DataConnection } from "peerjs"
 import { IdentifiedPayload, PotatoPeerId, PotatoUser } from "./PotatoNet"
-import PotatoClient, { ClientPayload, ClientPayloadData, ClientPayloadType, PotatoClientProcessing } from "./PotatoClient"
+import { ClientPayload, ClientPayloadData, ClientPayloadType, PotatoClientProcessing } from "./PotatoClient"
 
 // Please make K=V in this enum!!
 export enum ServerPayloadType {
