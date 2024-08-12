@@ -37,10 +37,10 @@ export default class Instrument {
         this.divisions = divisions
     }
     
-    async press(pitch: number) {
+    async press(_pitch: number) {
 
     }
-    async release(pitch: number) {
+    async release(_pitch: number) {
 
     }
 }
