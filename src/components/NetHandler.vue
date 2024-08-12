@@ -16,7 +16,7 @@ let processingRef: Ref<PotatoClientProcessing | null> = ref(null)
 
 function panic(msg: string) {
     console.warn(msg) // This should be shown to the user somehow after the location is replaced,,
-    window.location.replace("/");
+    window.location.replace("../");
 }
 
 async function accepted() {
@@ -25,7 +25,7 @@ async function accepted() {
         return panic("Accepted without processing?!?!")
     }
     roomId.value = urlRoom
-    window.history.replaceState(roomId.value, roomId.value, `/?room=${roomId.value}`)
+    window.history.replaceState(roomId.value, roomId.value, `./?room=${roomId.value}`)
     processing.on("notePayload", (event) => {
         props.push_payload(event);
     })
