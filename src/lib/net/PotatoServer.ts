@@ -22,7 +22,11 @@ type ServerStatePayload = {
     connected: PotatoUser[],
 }
 
-type ServerNotePayload = ClientPayloadData<ClientPayloadType.NOTE_PAYLOAD> & IdentifiedPayload
+
+export type ServerNotePayload = {
+    event: string,
+    note: number
+} & IdentifiedPayload
 
 export type ServerPayloadData<T extends ServerPayloadType> = 
     T extends ServerPayloadType.NEW_CONNECTION ? ServerNewConnectionPayload

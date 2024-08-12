@@ -2,8 +2,11 @@
 
 import * as Tone from "tone";
 import Instrument from "./Instruments"
+import { ServerNotePayload } from "./net/PotatoServer";
+import { Optional } from "./TypeUtil";
 
-export type NoteEventPayload = { event: string, note: number }
+/** This payload might come from the user itself or from a remote client */
+export type NoteEventPayload = Optional<ServerNotePayload, "id">
 
 export default class SoundHandler {
 

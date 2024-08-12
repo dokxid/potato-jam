@@ -2,12 +2,12 @@
 import { onMounted, onUnmounted, Ref, ref } from 'vue';
 import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
-import PotatoServer from '../lib/net/PotatoServer';
+import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
 import { NoteEventPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
 
 let props = defineProps<{
-    push_payload: (payload: NoteEventPayload) => void
+    push_payload: (payload: NoteEventPayload | ServerNotePayload) => void
 }>()
 let url = new URL(window.location.href)
 let urlRoom = url.searchParams.get("room") || "";

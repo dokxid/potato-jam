@@ -1,6 +1,6 @@
 import Peer, { DataConnection } from "peerjs";
 import { PotatoPeerId, PotatoUser } from "./PotatoNet";
-import { ServerPayload, ServerPayloadType } from "./PotatoServer";
+import { ServerNotePayload, ServerPayload, ServerPayloadType } from "./PotatoServer";
 import { Optional } from "../TypeUtil";
 import SettingsUtil from "../SettingsUtil";
 import { reactive } from "vue";
@@ -33,7 +33,7 @@ type PotatoClientEvents = {
     "connectionClosed": () => {}
     "connectionOpen": () => {}
     "accepted": () => {}
-    "notePayload": (event: NoteEventPayload) => {}
+    "notePayload": (event: ServerNotePayload) => {}
 }
 export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
     connected: {[id: PotatoPeerId]: PotatoUser};

@@ -16,10 +16,6 @@ let file = ""
 // emits
 const emit = defineEmits(['sound_handler_initialized'])
 
-defineExpose({
-  process_sound_events
-})
-
 async function process_sound_events(note_event: NoteEventPayload) {
   soundHandler.play(note_event.event, note_event.note, instrument_selected)
 }
