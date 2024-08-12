@@ -14,14 +14,14 @@ import SoundHandler from "./lib/SoundHandler";
 // refs
 const started = ref<boolean>(false)
 const sound_events = ref<Object[]>([])
-const InstrumentUI_ref = ref<typeof InstrumentUI>()
+const InstrumentUI_ref = ref<InstanceType<typeof InstrumentUI>>()
 
 
 // functions
 function process_key(payload: { event: string, note: number }) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
 
-  sound_events.value?.push({event: payload.event, note: payload.note})
+  sound_events.value.push({event: payload.event, note: payload.note})
   InstrumentUI_ref.value?.process_sound_events()
 }
 
