@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar.vue";
 import NetHandler from "./components/NetHandler.vue";
 import InstrumentUI from "./components/InstrumentUI.vue";
 import SoundHandler, { NoteEventPayload } from "./lib/SoundHandler";
+import MainEventHandler from "./lib/MainEventHandler";
 
 // refs
 const started = ref<boolean>(false)
@@ -22,7 +23,7 @@ const NetHandler_ref = ref<InstanceType<typeof NetHandler>>();
 function push_payload(payload: NoteEventPayload) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
   // sound_events.push(payload)
-  InstrumentUI_ref.value?.process_sound_events(payload)
+  MainEventHandler.sendNotePayload(payload);
 }
 
 // This one must only be called when the user produces the input, not any remote

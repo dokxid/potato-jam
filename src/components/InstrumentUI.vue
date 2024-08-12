@@ -3,6 +3,7 @@
 import InstrumentSwitcher from "./InstrumentSwitcher.vue";
 import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
 import {onMounted, ref } from "vue";
+import MainEventHandler from "../lib/MainEventHandler.ts";
 
 // let sound_events = defineModel<NoteEventPayload[]>()
 
@@ -20,22 +21,10 @@ defineExpose({
 })
 
 async function process_sound_events(note_event: NoteEventPayload) {
-  // let new_sound_events = sound_events.value
-  // console.log(new_sound_events)
-  // if(new_sound_events === undefined) return;
-  // try {
-  //   let promises = []
-  //   for (const note_event of new_sound_events) {
-  //     promises.push()
-  //     sound_events.value?.shift()
-  //   }
-  //   await Promise.allSettled(promises);
-  // } catch (e) {
-  //   console.log('HELLO!')
-  //   console.error(e)
-  // }
   soundHandler.play(note_event.event, note_event.note, instrument_selected)
 }
+
+MainEventHandler.on("notePayload", process_sound_events)
 
 async function read_file(files: any) {
   file = await files.item(0).type
