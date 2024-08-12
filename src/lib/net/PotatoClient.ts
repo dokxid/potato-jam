@@ -98,7 +98,7 @@ export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
             console.warn(`Got ${data} from server ${this.serverId}!`)
             return;
         }
-        console.log(data)
+        console.log("client got", data)
         if(typeof(data) !== "object") {
             console.warn(`Received unknown data type from server ${this.serverId}! Expected "object" got "${typeof(data)}"`)
             return;

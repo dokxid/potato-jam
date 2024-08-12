@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 // imports
-import {reactive, ref} from "vue";
+import {ref} from "vue";
 
 // component imports
 import UIContainer from "./components/ui/UIContainer.vue";
@@ -13,7 +13,7 @@ import SoundHandler, { NoteEventPayload } from "./lib/SoundHandler";
 
 // refs
 const started = ref<boolean>(false)
-const sound_events = reactive<NoteEventPayload[]>([])
+// const sound_events = reactive<NoteEventPayload[]>([])
 const InstrumentUI_ref = ref<InstanceType<typeof InstrumentUI>>();
 const NetHandler_ref = ref<InstanceType<typeof NetHandler>>();
 
@@ -21,8 +21,8 @@ const NetHandler_ref = ref<InstanceType<typeof NetHandler>>();
 // functions
 function push_payload(payload: NoteEventPayload) {
   console.log(`received event: ${payload.event} - ${payload.note}`);
-  sound_events.push({event: payload.event, note: payload.note})
-  InstrumentUI_ref.value?.process_sound_events()
+  // sound_events.push(payload)
+  InstrumentUI_ref.value?.process_sound_events(payload)
 }
 
 // This one must only be called when the user produces the input, not any remote
@@ -58,9 +58,9 @@ async function initSoundHandler() {
     </UIContainer>
 
     <UIContainer :title="'instrument'">
+      <!-- v-model="sound_events"  -->
       <InstrumentUI
           ref="InstrumentUI_ref"
-          v-model="sound_events"
           @sound_handler_initialized="started = true"
       />
     </UIContainer>

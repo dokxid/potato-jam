@@ -170,7 +170,7 @@ export default class PotatoServer {
             console.warn(`Got ${data} from ${id}!`)
             return;
         }
-        console.log(data)
+        console.log("server got", data)
         if(typeof(data) !== "object") {
             console.warn(`Received unknown data type from ${id}! Expected "object" got "${typeof(data)}"`)
             return;
