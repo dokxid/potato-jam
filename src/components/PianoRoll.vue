@@ -24,7 +24,7 @@ const transpose_amt = ref<number>(0)
 const key_names = constants.SEMITONE_NAMES
 const keybinds = constants.KEYBINDS
 
-let prev_key = ""
+// let prev_key = ""
 let scale_pattern: Array<number> = constants.SCALES[scale_selected.value]
 
 function calculate_keys() {
