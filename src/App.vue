@@ -11,8 +11,6 @@ import NetHandler from "./components/NetHandler.vue";
 import InstrumentUI from "./components/InstrumentUI.vue";
 import SoundHandler, { NoteEventPayload } from "./lib/SoundHandler";
 import MainEventHandler from "./lib/MainEventHandler";
-import { ServerNotePayload } from "./lib/net/PotatoServer";
-import { Optional } from "./lib/TypeUtil";
 
 // refs
 const started = ref<boolean>(false)
