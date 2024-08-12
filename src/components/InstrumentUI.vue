@@ -51,8 +51,8 @@ onMounted(() => init())
       <h3>sample settings</h3>
       <div class="flex flex-row space-x-2">
         <input type="file" @change="(e) => {read_file((e.target as HTMLInputElement).files); file_loaded = true }"
-               class="file-input file-input-primary w-full text-base-content"/>
-        <button class="btn btn-primary shrink" v-show="file_loaded">apply</button>
+               class="file-input file-input-bordered w-full text-base-content"/>
+        <button class="btn btn-gradient shrink" v-show="file_loaded">apply</button>
       </div>
       <div v-show="file_loaded">
         {{ "loaded type: " + file }}

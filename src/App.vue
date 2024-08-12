@@ -5,12 +5,14 @@ import {ref} from "vue";
 
 // component imports
 import UIContainer from "./components/ui/UIContainer.vue";
-import PianoRoll from "./components/PianoRoll.vue";
+import UIAddContainer from "./components/ui/UIAddContainer.vue";
+import PianoRoll from "./components/piano/PianoRoll.vue";
 import NavBar from "./components/NavBar.vue";
 import NetHandler from "./components/NetHandler.vue";
 import InstrumentUI from "./components/InstrumentUI.vue";
-import SoundHandler, { NoteEventPayload } from "./lib/SoundHandler";
+import SoundHandler, {NoteEventPayload} from "./lib/SoundHandler";
 import MainEventHandler from "./lib/MainEventHandler";
+import EnterOverlay from "./components/ui/EnterOverlay.vue";
 
 // refs
 const started = ref<boolean>(false)
@@ -38,36 +40,36 @@ async function initSoundHandler() {
 
 <template>
 
-  <NavBar/>
-  <div class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
-    <!-- pls someone somehow center this -->
-    <button
-          class="btn btn-primary w-full"
-          v-if="!started"
-          @click="initSoundHandler"> 
-    Click to start audio
-    </button>
-  </div>
+  <div class="flex flex-col h-lvh" >
+    <NavBar class="grow-0"/>
 
-  <div v-if="started" class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
+    <div class="grow relative">
+      <EnterOverlay v-model="started" @init-sound-handler="initSoundHandler"/>
 
-    <UIContainer :title="'lobby'" class="md:col-span-2">
-      <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
-    </UIContainer>
+      <div
+           class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
 
-    <UIContainer :title="'instrument'">
-      <!-- v-model="sound_events"  -->
-      <InstrumentUI
-          @sound_handler_initialized="started = true"
-      />
-    </UIContainer>
+        <UIContainer :title="'lobby'" class="md:col-span-2">
+          <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
+        </UIContainer>
 
-    <UIContainer :title="'piano roll'" class="md:col-span-3">
-      <div class="flex container justify-start lg:justify-center items-center" v-show="started">
-        <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+        <UIContainer :title="'instrument'">
+          <!-- v-model="sound_events"  -->
+          <InstrumentUI
+              v-if="started"
+              @sound_handler_initialized="started = true"
+          />
+        </UIContainer>
+
+        <UIContainer :title="'piano roll'" class="md:col-span-3">
+          <div class="flex container justify-start lg:justify-center items-center">
+            <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+          </div>
+        </UIContainer>
+
+        <UIAddContainer class="md:col-span-3" />
+
       </div>
-    </UIContainer>
-
+    </div>
   </div>
-
 </template>
