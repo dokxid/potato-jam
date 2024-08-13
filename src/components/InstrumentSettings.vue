@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import InstrumentSwitcher from "./InstrumentSwitcher.vue";
+import InstrumentSwitcher from "./ui/InstrumentSwitcher.vue";
 import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
 import {onMounted, ref, watch} from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";

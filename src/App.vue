@@ -6,13 +6,13 @@ import {ref} from "vue";
 // component imports
 import UIContainer from "./components/ui/UIContainer.vue";
 import UIAddContainer from "./components/ui/UIAddContainer.vue";
-import PianoRoll from "./components/piano/PianoRoll.vue";
-import NavBar from "./components/NavBar.vue";
+import NavBar from "./components/ui/NavBar.vue";
 import NetHandler from "./components/NetHandler.vue";
-import InstrumentUI from "./components/InstrumentUI.vue";
 import SoundHandler, {NoteEventPayload} from "./lib/SoundHandler";
 import MainEventHandler from "./lib/MainEventHandler";
 import EnterOverlay from "./components/ui/EnterOverlay.vue";
+import PianoRollUI from "./components/ui/PianoRollUI.vue";
+import InstrumentSettingsUI from "./components/ui/InstrumentSettingsUI.vue";
 
 // refs
 const started = ref<boolean>(false)
@@ -59,16 +59,8 @@ async function initSoundHandler() {
 
         <UIContainer :title="'instruments'" class="md:col-span-3">
           <div class="flex flex-wrap gap-3">
-            <div class="p-5 items-center bg-base-100 rounded-xl grow overflow-x-scroll">
-              <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
-            </div>
-            <div class="p-5 items-center bg-base-100 rounded-xl grow-0">
-            <InstrumentUI
-                v-if="started"
-                @sound_handler_initialized="started = true"
-                class="min-w-40"
-            />
-            </div>
+            <PianoRollUI @send_key_event="payload => process_key(payload)"/>
+            <InstrumentSettingsUI v-model="started"/>
           </div>
         </UIContainer>
 
