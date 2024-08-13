@@ -53,17 +53,22 @@ async function initSoundHandler() {
           <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
         </UIContainer>
 
-        <UIContainer :title="'instrument'">
+        <UIContainer :title="'instrument list'">
           <!-- v-model="sound_events"  -->
-          <InstrumentUI
-              v-if="started"
-              @sound_handler_initialized="started = true"
-          />
         </UIContainer>
 
-        <UIContainer :title="'piano roll'" class="md:col-span-3">
-          <div class="flex container justify-start lg:justify-center items-center">
-            <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+        <UIContainer :title="'instruments'" class="md:col-span-3">
+          <div class="flex flex-wrap gap-3">
+            <div class="p-5 items-center bg-base-100 rounded-xl grow overflow-x-scroll">
+              <PianoRoll class="" @send_key_event="payload => process_key(payload)"/>
+            </div>
+            <div class="p-5 items-center bg-base-100 rounded-xl grow-0">
+            <InstrumentUI
+                v-if="started"
+                @sound_handler_initialized="started = true"
+                class="min-w-40"
+            />
+            </div>
           </div>
         </UIContainer>
 

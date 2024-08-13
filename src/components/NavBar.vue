@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import SettingsModal from "./SettingsModal.vue";
+import SettingsModal from "./ui/SettingsModal.vue";
 
 const menu_items = ["home", "page", "settings"]
 const sub_pages = ["view 1", "view 2"]
