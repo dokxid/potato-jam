@@ -2,24 +2,24 @@
 
 import * as Tone from "tone";
 import Instrument, { DEFAULT_INSTRUMENT } from "./Instruments"
-import { ServerNotePayload, LOCAL_CLIENT_ID, ServerSwitchInstrumentPayload} from "./net/PotatoServer";
+import { ServerNotePayload, LOCAL_CLIENT_ID, SwitchInstrumentPayload} from "./net/PotatoServer";
 import { Optional } from "./TypeUtil";
-import { PotatoPeerId } from "./net/PotatoNet";
+import PotatoNet, { PotatoPeerId } from "./net/PotatoNet";
 
 /** This payload might come from the user itself or from a remote client */
 export type NoteEventPayload = Optional<ServerNotePayload, "id">
-export type SwitchInstrumentPayload = Optional<ServerSwitchInstrumentPayload, "id">
+export type ClientSwitchInstrumentPayload = Optional<SwitchInstrumentPayload, "id">
 
 export default class SoundHandler {
 
     loaded: boolean
 
     instruments: Map<string, Instrument>
-    peer_instruments: Map<PotatoPeerId, String>
+    peer_instruments: Map<PotatoPeerId, string>
 
     constructor() {
         this.instruments = new Map<string, Instrument>()
-        this.peer_instruments = new Map<PotatoPeerId, string>
+        this.peer_instruments = new Map<PotatoPeerId, string>();
         this.loaded = false
     }
 
@@ -28,7 +28,7 @@ export default class SoundHandler {
     }
 
     load_peer_instrument(peer: PotatoPeerId): string { // returns peer instrument id as well
-        let instrument_id: string = this.peer_instruments.get(peer)
+        let instrument_id = this.peer_instruments.get(peer)
         
         if (instrument_id === undefined) {
             instrument_id = DEFAULT_INSTRUMENT
@@ -43,9 +43,6 @@ export default class SoundHandler {
     set_peer_instrument(peer: PotatoPeerId, instrument_id: string) {
         this.peer_instruments.set(peer, instrument_id)
         this.load_peer_instrument(peer)
-    }
-    set_default_peer_instrument(peer: PotatoPeerId) {
-        this.set_peer_instrument(peer, DEFAULT_INSTRUMENT)
     }
 
     load_instrument(instrument: Instrument) {
@@ -65,11 +62,8 @@ export default class SoundHandler {
     }
 
     async play(note_event: NoteEventPayload) {
-        if (note_event.id === undefined) {
-            note_event.id = LOCAL_CLIENT_ID
-        }
-
-        let instrument_id: string = this.load_peer_instrument(note_event.id)
+        if(PotatoNet.processing === undefined) return;
+        let instrument_id: string = this.load_peer_instrument(note_event.id || PotatoNet.processing.localId);
 
         console.log("instrument id " + instrument_id)
 

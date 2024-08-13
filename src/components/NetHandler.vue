@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, Ref, ref } from 'vue';
 import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
-import { NoteEventPayload, SwitchInstrumentPayload } from '../lib/SoundHandler';
+import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
 
 let props = defineProps<{
@@ -29,6 +29,25 @@ async function accepted() {
     window.history.replaceState(roomId.value, roomId.value, `?room=${roomId.value}`)
     processing.on("notePayload", (event) => {
         props.push_payload(event);
+    })
+    processing.on("switchInstrumentPayload", (event) => {
+        MainEventHandler.sendRemoteSwitchInstrumentPayload(event);
+    })
+    for(let id in processing.connected) {
+        let user = processing.connected[id];
+        if(user.instrument === undefined) continue;
+        MainEventHandler.sendRemoteSwitchInstrumentPayload({
+            id,
+            instrument_id: user.instrument
+        })
+    }
+    // When a key is pressed by the user
+    MainEventHandler.on("userNotePayload", (payload) => {
+        processing.sendNotePayload(payload);
+    });
+    // When instrument is changed by the user
+    MainEventHandler.on("userSwitchInstrumentPayload", (payload) => {
+        processing.sendSwitchInstrumentPayload(payload);
     })
 }
 
@@ -60,20 +79,6 @@ async function init() {
         accepted()
     }
 }
-
-// When a key is pressed by the user
-function process_payload(payload: NoteEventPayload) {
-    if(processingRef.value == null) return;
-    processingRef.value.sendNotePayload(payload);
-}
-
-function switch_instrument(payload: SwitchInstrumentPayload) {
-    if(processingRef.value == null) return;
-    processingRef.value.sendSwitchInstrumentPayload(payload);
-}
-
-MainEventHandler.on("userNotePayload", process_payload)
-MainEventHandler.on("userSwitchInstrumentPayload", switch_instrument)
 
 async function unmounted() {
     if(server) {

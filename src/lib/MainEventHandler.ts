@@ -1,14 +1,14 @@
 import EventEmitter from "eventemitter3";
-import { NoteEventPayload, SwitchInstrumentPayload } from "./SoundHandler";
+import { ClientSwitchInstrumentPayload, NoteEventPayload } from "./SoundHandler";
+import { SwitchInstrumentPayload } from "./net/PotatoServer";
 
 type MainEvents = {
     // This one can be send by both the local client and remote clietns
     "notePayload": (payload: NoteEventPayload) => void
     // This one will ONLY be sent by the local client!!
     "userNotePayload": (payload: NoteEventPayload) => void
-
-    "switchInstrumentPayload": (payload: SwitchInstrumentPayload) => void
-    "userSwitchInstrumentPayload": (payload: SwitchInstrumentPayload) => void
+    "remoteSwitchInstrumentPayload": (payload: SwitchInstrumentPayload) => void
+    "userSwitchInstrumentPayload": (payload: ClientSwitchInstrumentPayload) => void
 }
 
 class MainEventHandler extends EventEmitter<MainEvents> {
@@ -24,11 +24,11 @@ class MainEventHandler extends EventEmitter<MainEvents> {
         this.emit("userNotePayload", payload);
     }
 
-    sendSwitchInstrumentPayload(payload: SwitchInstrumentPayload) {
-        this.emit("switchInstrumentPayload", payload)
+    sendRemoteSwitchInstrumentPayload(payload: SwitchInstrumentPayload) {
+        this.emit("remoteSwitchInstrumentPayload", payload);
     }
 
-    sendUserSwitchInstrumentPayload(payload: SwitchInstrumentPayload) {
+    sendUserSwitchInstrumentPayload(payload: ClientSwitchInstrumentPayload) {
         this.emit("userSwitchInstrumentPayload", payload)
     }
 }
