@@ -42,6 +42,8 @@ export default class SoundHandler {
         return instrument_id
     }
     set_peer_instrument(peer: PotatoPeerId, instrument_id: string) {
+        if (this.peer_instruments.get(peer) !== undefined) this.peer_instruments.get(peer)?.release_all();
+        
         this.peer_instrument_ids.set(peer, instrument_id)
         this.load_peer_instrument(peer)
     }
