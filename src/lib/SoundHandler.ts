@@ -29,7 +29,11 @@ export default class SoundHandler {
 
     load_peer_instrument(peer: PotatoPeerId): string { // returns peer instrument id as well
         let instrument_id: string = this.peer_instruments.get(peer)
-            
+        
+        if (instrument_id === undefined) {
+            instrument_id = DEFAULT_INSTRUMENT
+        }
+
         if (!this.is_instrument_loaded(instrument_id)) {
             this.load_instrument(Instrument.idInstancer(instrument_id))
         }
@@ -64,6 +68,7 @@ export default class SoundHandler {
         if (note_event.id === undefined) {
             note_event.id = LOCAL_CLIENT_ID
         }
+
         let instrument_id: string = this.load_peer_instrument(note_event.id)
 
         console.log("instrument id " + instrument_id)
