@@ -1,11 +1,14 @@
 import EventEmitter from "eventemitter3";
-import { NoteEventPayload } from "./SoundHandler";
+import { NoteEventPayload, SwitchInstrumentPayload } from "./SoundHandler";
 
 type MainEvents = {
     // This one can be send by both the local client and remote clietns
     "notePayload": (payload: NoteEventPayload) => void
     // This one will ONLY be sent by the local client!!
     "userNotePayload": (payload: NoteEventPayload) => void
+
+    "switchInstrumentPayload": (payload: SwitchInstrumentPayload) => void
+    "userSwitchInstrumentPayload": (payload: SwitchInstrumentPayload) => void
 }
 
 class MainEventHandler extends EventEmitter<MainEvents> {
@@ -19,6 +22,14 @@ class MainEventHandler extends EventEmitter<MainEvents> {
 
     sendUserNotePayload(payload: NoteEventPayload) {
         this.emit("userNotePayload", payload);
+    }
+
+    sendSwitchInstrumentPayload(payload: SwitchInstrumentPayload) {
+        this.emit("switchInstrumentPayload", payload)
+    }
+
+    sendUserSwitchInstrumentPayload(payload: SwitchInstrumentPayload) {
+        this.emit("userSwitchInstrumentPayload", payload)
     }
 }
 

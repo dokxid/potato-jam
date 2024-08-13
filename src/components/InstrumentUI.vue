@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import InstrumentSwitcher from "./InstrumentSwitcher.vue";
-import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
+import SoundHandler, { NoteEventPayload, SwitchInstrumentPayload } from "../lib/SoundHandler.ts";
 import {onMounted, ref, watch } from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";
 import { DEFAULT_INSTRUMENT } from "../lib/Instruments";
@@ -22,7 +22,16 @@ async function process_sound_events(note_event: NoteEventPayload) {
   soundHandler.play(note_event)
 }
 
+async function process_instrument_switch(switch_instrument_event: SwitchInstrumentPayload) {
+  if (switch_instrument_event.id === undefined) {
+    console.log(`UNDEFINED ${switch_instrument_event.id}`)
+    switch_instrument_event.id = LOCAL_CLIENT_ID
+  }
+  await soundHandler.set_peer_instrument(switch_instrument_event.id, switch_instrument_event.instrument_id)
+}
+
 MainEventHandler.on("notePayload", process_sound_events)
+MainEventHandler.on("switchInstrumentPayload", process_instrument_switch)
 
 async function read_file(files: any) {
   file = await files.item(0).type
@@ -30,6 +39,8 @@ async function read_file(files: any) {
 
 watch(instrument_selected, (new_instrument) => {
   soundHandler.set_peer_instrument(LOCAL_CLIENT_ID, new_instrument)
+  MainEventHandler.sendUserSwitchInstrumentPayload({instrument_id: new_instrument})
+  MainEventHandler.sendSwitchInstrumentPayload({instrument_id: new_instrument})
 })
 
 async function init() {

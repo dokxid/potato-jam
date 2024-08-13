@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, Ref, ref } from 'vue';
 import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
-import { NoteEventPayload } from '../lib/SoundHandler';
+import { NoteEventPayload, SwitchInstrumentPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
 
 let props = defineProps<{
@@ -64,11 +64,16 @@ async function init() {
 // When a key is pressed by the user
 function process_payload(payload: NoteEventPayload) {
     if(processingRef.value == null) return;
-    // console.log(payload.id)
     processingRef.value.sendNotePayload(payload);
 }
 
+function switch_instrument(payload: SwitchInstrumentPayload) {
+    if(processingRef.value == null) return;
+    processingRef.value.sendSwitchInstrumentPayload(payload);
+}
+
 MainEventHandler.on("userNotePayload", process_payload)
+MainEventHandler.on("userSwitchInstrumentPayload", switch_instrument)
 
 async function unmounted() {
     if(server) {

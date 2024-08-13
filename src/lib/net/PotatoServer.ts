@@ -11,7 +11,10 @@ export enum ServerPayloadType {
     /** S2B: Sent to all clients when a client disconnects */
     REMOVED_CONNECTION = "REMOVED_CONNECTION",
     /** S2B: Echoes a client's NOTE_PAYLOAD */
-    NOTE_PAYLOAD = "NOTE_PAYLOAD"
+    NOTE_PAYLOAD = "NOTE_PAYLOAD",
+
+    /** S2B: asks to switch instrument for peer*/
+    SWITCH_INSTRUMENT_PAYLOAD = "SWITCH_INSTRUMENT_PAYLOAD"
 }
 
 type ServerNewConnectionPayload = IdentifiedPayload & {
@@ -28,11 +31,16 @@ export type ServerNotePayload = {
     note: number
 } & IdentifiedPayload
 
+export type ServerSwitchInstrumentPayload = {
+    instrument_id: string
+} & IdentifiedPayload
+
 export type ServerPayloadData<T extends ServerPayloadType> = 
     T extends ServerPayloadType.NEW_CONNECTION ? ServerNewConnectionPayload
     : T extends ServerPayloadType.CONNECTION_ACCEPTED ? ServerStatePayload
     : T extends ServerPayloadType.REMOVED_CONNECTION ? IdentifiedPayload
     : T extends ServerPayloadType.NOTE_PAYLOAD ? ServerNotePayload
+    : T extends ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD ? ServerSwitchInstrumentPayload
     : undefined
 
 /**
@@ -170,6 +178,11 @@ export default class PotatoServer {
             let data = payload.data as ServerNotePayload
             data.id = id;
             this.broadcastExcept(id, ServerPayloadType.NOTE_PAYLOAD, data);
+        },
+        [ClientPayloadType.SWITCH_INSTRUMENT_PAYLOAD]: (id, payload) => {
+            let data = payload.data as ServerSwitchInstrumentPayload
+            data.id = id;
+            this.broadcastExcept(id, ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD, data);
         }
     }
 
