@@ -35,6 +35,7 @@ export default class SoundHandler {
         }
 
         if (!this.is_instrument_loaded(instrument_id)) {
+            console.log("INSTRUMENT NOT LOADED SO IM LOADING IT ")
             this.load_instrument(Instrument.idInstancer(instrument_id))
         }
 

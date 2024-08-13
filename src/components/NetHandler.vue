@@ -5,10 +5,8 @@ import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
 import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
+import { DEFAULT_INSTRUMENT } from '../lib/Instruments';
 
-let props = defineProps<{
-    push_payload: (payload: NoteEventPayload | ServerNotePayload) => void
-}>()
 let url = new URL(window.location.href)
 let urlRoom = url.searchParams.get("room") || "";
 let roomId = ref("");
@@ -22,23 +20,31 @@ function panic(msg: string) {
 
 async function accepted() {
     let processing = processingRef.value
+    console.log(":HELLOAS")
     if(!processing) {
         return panic("Accepted without processing?!?!")
     }
     roomId.value = urlRoom
     window.history.replaceState(roomId.value, roomId.value, `?room=${roomId.value}`)
     processing.on("notePayload", (event) => {
-        props.push_payload(event);
+        //props.push_payload(event);
+        MainEventHandler.sendNotePayload(event);
     })
     processing.on("switchInstrumentPayload", (event) => {
         MainEventHandler.sendRemoteSwitchInstrumentPayload(event);
     })
+
+    console.log(processing.connected)
+
     for(let id in processing.connected) {
         let user = processing.connected[id];
-        if(user.instrument === undefined) continue;
+        let instrument = user.instrument || DEFAULT_INSTRUMENT
+
+        console.log(id, instrument)
+
         MainEventHandler.sendRemoteSwitchInstrumentPayload({
             id,
-            instrument_id: user.instrument
+            instrument_id: instrument
         })
     }
     // When a key is pressed by the user
