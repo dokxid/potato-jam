@@ -14,12 +14,12 @@ export default class SoundHandler {
 
     loaded: boolean
 
-    instruments: Map<string, Instrument>
-    peer_instruments: Map<PotatoPeerId, string>
+    peer_instruments: Map<PotatoPeerId, Instrument>
+    peer_instrument_ids: Map<PotatoPeerId, string>
 
     constructor() {
-        this.instruments = new Map<string, Instrument>()
-        this.peer_instruments = new Map<PotatoPeerId, string>();
+        this.peer_instruments = new Map<PotatoPeerId, Instrument>();
+        this.peer_instrument_ids = new Map<PotatoPeerId, string>();
         this.loaded = false
     }
 
@@ -28,34 +28,29 @@ export default class SoundHandler {
     }
 
     load_peer_instrument(peer: PotatoPeerId): string { // returns peer instrument id as well
-        let instrument_id = this.peer_instruments.get(peer)
-        
+        let instrument_id = this.peer_instrument_ids.get(peer)
+
         if (instrument_id === undefined) {
-            instrument_id = DEFAULT_INSTRUMENT
+            console.log("instrument id undefined??? set it please")
+            return ""
         }
 
-        if (!this.is_instrument_loaded(instrument_id)) {
-            console.log("INSTRUMENT NOT LOADED SO IM LOADING IT ")
-            this.load_instrument(Instrument.idInstancer(instrument_id))
+        if (!this.peer_is_correct_instrument_loaded(peer, instrument_id)) {
+            this.peer_instruments.set(peer, Instrument.idInstancer(instrument_id))
         }
 
         return instrument_id
     }
     set_peer_instrument(peer: PotatoPeerId, instrument_id: string) {
-        this.peer_instruments.set(peer, instrument_id)
+        this.peer_instrument_ids.set(peer, instrument_id)
         this.load_peer_instrument(peer)
     }
 
-    load_instrument(instrument: Instrument) {
-        this.instruments.set(instrument.id, instrument)
+    peer_is_any_instrument_loaded(peer: PotatoPeerId) {
+        return this.peer_instruments.get(peer) !== undefined
     }
-
-    load_instrument_id(id: string) {
-        this.load_instrument(Instrument.idInstancer(id))
-    }
-
-    is_instrument_loaded(id: string): boolean {
-        return this.instruments.has(id)
+    peer_is_correct_instrument_loaded(peer: PotatoPeerId, correct_instrument_id: string): boolean {
+        return this.peer_instruments.get(peer)?.id === correct_instrument_id
     }
 
     set_loaded() {
@@ -64,22 +59,23 @@ export default class SoundHandler {
 
     async play(note_event: NoteEventPayload) {
         if(PotatoNet.processing === undefined) return;
-        let instrument_id: string = this.load_peer_instrument(note_event.id || PotatoNet.processing.localId);
+        let id = note_event.id || PotatoNet.processing.localId
+        this.load_peer_instrument(id); 
 
-        console.log("instrument id " + instrument_id)
+        console.log("peer id " + id)
 
         if (note_event.event === "pressed")
-            this.press(note_event.note, instrument_id)
+            this.press(note_event.note, id)
         else
-            this.release(note_event.note, instrument_id)
+            this.release(note_event.note, id)
     }
 
-    async press(pitch: number, id: string) {
-        this.instruments.get(id)?.press(pitch)
+    async press(pitch: number, peer: string) {
+        this.peer_instruments.get(peer)?.press(pitch)
     }
 
-    async release(pitch: number, id: string) {
-        this.instruments.get(id)?.release(pitch)
+    async release(pitch: number, peer: string) {
+        this.peer_instruments.get(peer)?.release(pitch)
     }
 
 

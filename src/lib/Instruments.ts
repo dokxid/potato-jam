@@ -44,6 +44,10 @@ export default class Instrument {
     async release(_pitch: number) {
 
     }
+
+    async release_all() {
+
+    }
 }
 
 export class meow extends Instrument {
@@ -78,6 +82,11 @@ export class meow extends Instrument {
         await console.log("released")
         await this.sampler.triggerRelease(this.get_pitch(pitch))
     }
+    async release_all(){
+        if (this.locked)
+            return
+        await this.sampler.releaseAll()
+    }
 }
 
 export class PolySynth extends Instrument {
@@ -100,5 +109,10 @@ export class PolySynth extends Instrument {
         if (this.locked)
             return
         await this.polysynth.triggerRelease(this.get_pitch(pitch))
+    }
+    async release_all() {
+        if (this.locked)
+            return
+        await this.polysynth.releaseAll()
     }
 }
