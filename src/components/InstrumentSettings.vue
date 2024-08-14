@@ -55,14 +55,14 @@ onMounted(() => init())
       <h3>instrument settings</h3>
       <InstrumentSwitcher
           v-model="instrument_selected"
-          class="fixed-bottom select select-bordered w-full text-base-content"
+          class="fixed-bottom select select-bordered max-w-xl text-base-content"
       />
     </div>
     <div v-show="instrument_selected==='meow'">
       <h3>sample settings</h3>
       <div class="flex flex-row space-x-2">
         <input type="file" @change="(e) => {read_file((e.target as HTMLInputElement).files); file_loaded = true }"
-               class="file-input file-input-bordered w-full text-base-content"/>
+               class="file-input file-input-bordered max-w-xl text-base-content"/>
         <button class="btn btn-gradient shrink" v-show="file_loaded">apply</button>
       </div>
       <div v-show="file_loaded">
