@@ -9,11 +9,16 @@ type MainEvents = {
     "userNotePayload": (payload: NoteEventPayload) => void
     "remoteSwitchInstrumentPayload": (payload: SwitchInstrumentPayload) => void
     "userSwitchInstrumentPayload": (payload: ClientSwitchInstrumentPayload) => void
+    "handlerInitialized": () => void
 }
 
 class MainEventHandler extends EventEmitter<MainEvents> {
     constructor() {
         super();
+    }
+
+    sendHandlerInitialized() {
+        this.emit("handlerInitialized")
     }
 
     sendNotePayload(payload: NoteEventPayload) {

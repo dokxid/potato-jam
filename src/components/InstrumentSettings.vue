@@ -39,6 +39,7 @@ MainEventHandler.on("remoteSwitchInstrumentPayload", (payload) => {
 async function init() {
   soundHandler = new SoundHandler()
   emit('sound_handler_initialized')
+  MainEventHandler.sendHandlerInitialized()
 }
 
 onMounted(() => init())

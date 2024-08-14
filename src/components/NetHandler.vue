@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, Ref, ref } from 'vue';
 import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
-import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
+import PotatoServer, { LOCAL_CLIENT_ID, ServerNotePayload } from '../lib/net/PotatoServer';
 import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
 import SettingsUtil from "../lib/SettingsUtil.ts";
@@ -38,17 +38,15 @@ async function accepted() {
 
     console.log(processing.connected)
 
-    for(let id in processing.connected) {
-        let user = processing.connected[id];
-        let instrument = user.instrument || DEFAULT_INSTRUMENT
+    /* due to some restructuring set_connected_peer_instruments got called BEFORE the soundhandler was actually loaded, 
+    so it was all just going nowhere basically
+    so it has to do this on handlerInitialized 
+    theres also an extra call for set_connected_peer_instruments because      */
 
-        console.log(id, instrument)
+    MainEventHandler.on("handlerInitialized", () => {
+            set_connected_peer_instruments()
+    })
 
-        MainEventHandler.sendRemoteSwitchInstrumentPayload({
-            id,
-            instrument_id: instrument
-        })
-    }
     // When a key is pressed by the user
     MainEventHandler.on("userNotePayload", (payload) => {
         processing.sendNotePayload(payload);
@@ -57,6 +55,8 @@ async function accepted() {
     MainEventHandler.on("userSwitchInstrumentPayload", (payload) => {
         processing.sendSwitchInstrumentPayload(payload);
     })
+
+    set_connected_peer_instruments()
 }
 
 let server: PotatoServer | undefined;
@@ -100,6 +100,26 @@ async function unmounted() {
 function copyRoomLink() {
     if(!processingRef) return;
     navigator.clipboard.writeText(window.location.href)
+}
+
+async function set_connected_peer_instruments() {
+    let processing = processingRef.value
+    
+    MainEventHandler.sendUserSwitchInstrumentPayload({
+        instrument_id: DEFAULT_INSTRUMENT
+    })
+
+    for(let id in processing.connected) {
+            let user = processing.connected[id];
+            let instrument = user.instrument || DEFAULT_INSTRUMENT
+    
+            console.log(id, instrument)
+    
+            MainEventHandler.sendRemoteSwitchInstrumentPayload({
+                id,
+                instrument_id: instrument
+            })
+        }
 }
 
 onMounted(init)
