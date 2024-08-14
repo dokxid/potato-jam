@@ -4,6 +4,7 @@ export const INSTRUMENT_LIST = [
     "meow",
     "synth"
 ]
+export const DEFAULT_INSTRUMENT: string = INSTRUMENT_LIST[0]
 
 export default class Instrument {
     divisions: number = 12
@@ -43,6 +44,10 @@ export default class Instrument {
     async release(_pitch: number) {
 
     }
+
+    async release_all() {
+
+    }
 }
 
 export class meow extends Instrument {
@@ -68,12 +73,19 @@ export class meow extends Instrument {
     async press(pitch: number) {
         if (this.locked)
             return
+        await console.log("pressed")
         await this.sampler.triggerAttack(this.get_pitch(pitch))
     }
     async release(pitch: number) {
         if (this.locked)
             return
+        await console.log("released")
         await this.sampler.triggerRelease(this.get_pitch(pitch))
+    }
+    async release_all(){
+        if (this.locked)
+            return
+        await this.sampler.releaseAll()
     }
 }
 
@@ -97,5 +109,10 @@ export class PolySynth extends Instrument {
         if (this.locked)
             return
         await this.polysynth.triggerRelease(this.get_pitch(pitch))
+    }
+    async release_all() {
+        if (this.locked)
+            return
+        await this.polysynth.releaseAll()
     }
 }

@@ -4,11 +4,13 @@ import InstrumentSwitcher from "./ui/InstrumentSwitcher.vue";
 import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
 import {onMounted, ref, watch} from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";
+import { DEFAULT_INSTRUMENT } from "../lib/Instruments";
+import { LOCAL_CLIENT_ID } from "../lib/net/PotatoServer";
 
 // let sound_events = defineModel<NoteEventPayload[]>()
 
 let soundHandler: SoundHandler;
-let instrument_selected = ref<string>("meow")
+let instrument_selected = ref<string>(DEFAULT_INSTRUMENT)
 
 const file_loaded = ref<boolean>(false)
 let file = ""
@@ -17,7 +19,7 @@ let file = ""
 const emit = defineEmits(['sound_handler_initialized'])
 
 async function process_sound_events(note_event: NoteEventPayload) {
-  await soundHandler.play(note_event.event, note_event.note, instrument_selected.value)
+  soundHandler.play(note_event)
 }
 
 MainEventHandler.on("notePayload", process_sound_events)
@@ -27,12 +29,15 @@ async function read_file(files: any) {
 }
 
 watch(instrument_selected, (new_instrument) => {
-  soundHandler.load_instrument_id(new_instrument)
+  MainEventHandler.sendUserSwitchInstrumentPayload({instrument_id: new_instrument})
+})
+
+MainEventHandler.on("remoteSwitchInstrumentPayload", (payload) => {
+  soundHandler.set_peer_instrument(payload.id, payload.instrument_id);
 })
 
 async function init() {
   soundHandler = new SoundHandler()
-  soundHandler.load_instrument_id(instrument_selected.value)
   emit('sound_handler_initialized')
 }
 

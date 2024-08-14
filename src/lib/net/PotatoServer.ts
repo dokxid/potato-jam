@@ -11,7 +11,10 @@ export enum ServerPayloadType {
     /** S2B: Sent to all clients when a client disconnects */
     REMOVED_CONNECTION = "REMOVED_CONNECTION",
     /** S2B: Echoes a client's NOTE_PAYLOAD */
-    NOTE_PAYLOAD = "NOTE_PAYLOAD"
+    NOTE_PAYLOAD = "NOTE_PAYLOAD",
+
+    /** S2B: Asks to switch instrument for peer */
+    SWITCH_INSTRUMENT_PAYLOAD = "SWITCH_INSTRUMENT_PAYLOAD"
 }
 
 type ServerNewConnectionPayload = IdentifiedPayload & {
@@ -28,11 +31,16 @@ export type ServerNotePayload = {
     note: number
 } & IdentifiedPayload
 
+export type SwitchInstrumentPayload = {
+    instrument_id: string
+} & IdentifiedPayload
+
 export type ServerPayloadData<T extends ServerPayloadType> = 
     T extends ServerPayloadType.NEW_CONNECTION ? ServerNewConnectionPayload
     : T extends ServerPayloadType.CONNECTION_ACCEPTED ? ServerStatePayload
     : T extends ServerPayloadType.REMOVED_CONNECTION ? IdentifiedPayload
     : T extends ServerPayloadType.NOTE_PAYLOAD ? ServerNotePayload
+    : T extends ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD ? SwitchInstrumentPayload
     : undefined
 
 /**
@@ -48,8 +56,8 @@ type ServerConnectionInfo = {
     user?: PotatoUser;
 }
 
-const LOCAL_CLIENT_ID = "localPotatoClient";
-const LOCAL_SERVER_ID = "localPotatoServer";
+export const LOCAL_CLIENT_ID = "localPotatoClient";
+export const LOCAL_SERVER_ID = "localPotatoServer";
 export default class PotatoServer {
     peer: Peer;
     connections: {[id: PotatoPeerId]: ServerConnectionInfo};
@@ -170,6 +178,15 @@ export default class PotatoServer {
             let data = payload.data as ServerNotePayload
             data.id = id;
             this.broadcastExcept(id, ServerPayloadType.NOTE_PAYLOAD, data);
+        },
+        [ClientPayloadType.SWITCH_INSTRUMENT_PAYLOAD]: (id, payload) => {
+            let data = payload.data as SwitchInstrumentPayload
+            data.id = id;
+            let user = this.connections[id].user
+            if(user) {
+                user.instrument = payload.data.instrument_id;
+            }
+            this.broadcast(ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD, data);
         }
     }
 

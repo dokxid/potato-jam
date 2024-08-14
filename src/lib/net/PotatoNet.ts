@@ -1,7 +1,7 @@
 import Peer from "peerjs";
 import { Ref, ref } from "vue";
 import PotatoServer from "./PotatoServer";
-import PotatoClient from "./PotatoClient";
+import PotatoClient, { PotatoClientProcessing } from "./PotatoClient";
 
 /** 
  * Must be the DataConnection's .peer on the server.
@@ -16,6 +16,7 @@ export type PotatoUser = {
     icon: string,
     /** A valid css color */
     color: string,
+    instrument?: string
 }
 
 export type IdentifiedPayload = {
@@ -38,6 +39,7 @@ export default class PotatoNet {
     static id: Ref<string> = ref("");
     static server?: PotatoServer;
     static client?: PotatoClient;
+    static processing?: PotatoClientProcessing;
 
     static init() {
         return new Promise<void>((res) => {
