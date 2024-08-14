@@ -13,10 +13,11 @@ import MainEventHandler from "./lib/MainEventHandler";
 import EnterOverlay from "./components/ui/EnterOverlay.vue";
 import PianoRollUI from "./components/ui/PianoRollUI.vue";
 import InstrumentSettingsUI from "./components/ui/InstrumentSettingsUI.vue";
+import Instrument from "./lib/Instruments.ts";
 
 // refs
 const started = ref<boolean>(false)
-// const sound_events = reactive<NoteEventPayload[]>([])
+const instr_list = ref<Map<number, Instrument>>()
 
 // functions
 function push_payload(payload: NoteEventPayload) {
@@ -46,25 +47,25 @@ async function initSoundHandler() {
     <div class="grow relative">
       <EnterOverlay v-model="started" @init-sound-handler="initSoundHandler"/>
 
-      <div
-           class="container mx-auto flex flex-col md:grid md:grid-flow-row md:grid-cols-3 gap-4 py-5 items-center overflow-x-scroll">
+      <div class="container mx-auto flex flex-col md:flex-row md:flex-wrap gap-4 py-5 items-center overflow-x-scroll">
 
-        <UIContainer :title="'lobby'" class="md:col-span-2">
+        <UIContainer :title="'lobby'" class="">
           <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
         </UIContainer>
 
-        <UIContainer :title="'instrument list'">
-          <!-- v-model="sound_events"  -->
-        </UIContainer>
+<!--        <UIContainer :title="'instrument list'">-->
+<!--           v-model="sound_events"  -->
+<!--        </UIContainer>-->
 
-        <UIContainer :title="'instruments'" class="md:col-span-3">
-          <div class="flex flex-wrap gap-3">
-            <PianoRollUI @send_key_event="payload => process_key(payload)"/>
+        <UIContainer :title="'instruments'" class="">
+          <div class="flex flex-wrap md:flex-row gap-3 p-4 bg-gradient rounded-xl">
+            <h2 class="w-full text-primary-content font-bold text-xl text-end">piano [user]</h2>
+            <PianoRollUI @send_key_event="payload => process_key(payload)" :instrument="instr_ctx"/>
             <InstrumentSettingsUI v-model="started"/>
           </div>
+          <UIAddContainer class="mt-4" />
         </UIContainer>
 
-        <UIAddContainer class="md:col-span-3" />
 
       </div>
     </div>

@@ -58,11 +58,9 @@ function check_input(ev: KeyboardEvent) {
 
 function change_scale(scale_name: string) {
   scale_pattern = constants.SCALES[scale_name]
-  console.log(`pattern for ${scale_name} is ${scale_pattern}`)
 }
 
 watch(scale_selected, async (new_scale) => {
-  console.log(new_scale)
   change_scale(new_scale)
 })
 
@@ -100,8 +98,14 @@ onMounted(init)
           @click="transpose_amt = 0"
       > {{`transpose: +${transpose_amt}`}} </button>
       <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range range-primary"/>
+      <select v-model="scale_selected" class="select select-bordered text-base-content w-full max-w-xs">
+        <option
+            :value="scale"
+            v-for="scale in Object.keys(constants.SCALES)">{{ scale }}
+        </option>
+      </select>
     </div>
-    <div class="flex flex-row w-full min-h-20 p-2 bg-base-100 space-x-1 justify-center rounded-sm overflow-x-auto">
+    <div class="flex flex-row w-max min-h-fit p-2 space-x-0.5 justify-center overflow-x-auto">
       <PianoKeyDefault
           v-for="(_, idx) in key_amt"
           :note="key_names[idx_trans(idx)%(key_names.length)]"
@@ -112,13 +116,6 @@ onMounted(init)
           @mouseleave="release_key(idx_trans(idx))"
       />
     </div>
-    <select v-model="scale_selected" class="select select-bordered text-base-content w-full max-w-xs">
-      <option
-          :value="scale"
-          v-for="scale in Object.keys(constants.SCALES)">{{ scale }}
-      </option>
-    </select>
-    <div>{{scale_pattern}}</div>
   </div>
 </template>
 

@@ -16,10 +16,10 @@ const props = defineProps({
       p-5
       bg-transparent
       border-4
-      border-neutral
-      hover:border-neutral-content
-      text-neutral
-      hover:text-neutral-content
+      border-base-200
+      hover:border-primary
+      text-base-200
+      hover:text-primary
       rounded-lg
       h-full
       w-full

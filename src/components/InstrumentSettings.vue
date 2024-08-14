@@ -42,12 +42,18 @@ onMounted(() => init())
 
 <template>
   <div class="flex flex-col gap-3">
+<!--    <div>-->
+<!--      <h3>general settings</h3>-->
+<!--      <p>{{instrument_selected}}</p>-->
+<!--    </div>-->
     <div>
-      <h3>general settings</h3>
-      <p>{{instrument_selected}}</p>
-
+      <h3>instrument settings</h3>
+      <InstrumentSwitcher
+          v-model="instrument_selected"
+          class="fixed-bottom select select-bordered w-full text-base-content"
+      />
     </div>
-    <div>
+    <div v-show="instrument_selected==='meow'">
       <h3>sample settings</h3>
       <div class="flex flex-row space-x-2">
         <input type="file" @change="(e) => {read_file((e.target as HTMLInputElement).files); file_loaded = true }"
@@ -58,12 +64,8 @@ onMounted(() => init())
         {{ "loaded type: " + file }}
       </div>
     </div>
-    <div>
-      <h3>instrument settings</h3>
-      <InstrumentSwitcher
-          v-model="instrument_selected"
-          class="fixed-bottom select select-bordered w-full text-base-content"
-      />
+    <div v-show="instrument_selected === 'synth'">
+      <h3>synth settings</h3>
     </div>
   </div>
 </template>

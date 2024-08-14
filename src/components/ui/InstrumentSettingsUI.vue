@@ -3,7 +3,7 @@ import InstrumentSettings from "../InstrumentSettings.vue";
 const started = defineModel()
 </script>
 <template>
-  <div class="p-5 items-center bg-base-100 rounded-xl grow-0">
+  <div class="p-5 items-center bg-base-300 rounded-xl flex-auto">
     <InstrumentSettings
         v-if="started"
         @sound_handler_initialized="started = true"
