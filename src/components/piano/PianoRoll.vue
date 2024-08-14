@@ -93,10 +93,10 @@ onMounted(init)
   <div class="flex flex-col space-y-4">
     <div class="flex flex-row gap-4 items-center">
       <button
-          class="btn font-mono w-40"
+          class="btn font-mono w-fit"
           :class="[transpose_amt == 0 ? 'btn-neutral' : 'btn-gradient']"
           @click="transpose_amt = 0"
-      > {{`transpose: +${transpose_amt}`}} </button>
+      > {{`trsp: +${transpose_amt} st`}} </button>
       <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range range-primary"/>
       <select v-model="scale_selected" class="select select-bordered text-base-content w-full max-w-xs">
         <option

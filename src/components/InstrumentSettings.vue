@@ -76,7 +76,4 @@ onMounted(() => init())
 </template>
 
 <style scoped>
-h3 {
-  @apply text-lg mb-2
-}
 </style>
