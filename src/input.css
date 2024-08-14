@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .bg-gradient {
+        @apply bg-gradient-to-br from-primary to-secondary
+    }
+    .btn-gradient {
+        @apply btn-primary bg-gradient-to-br from-primary to-secondary hover:brightness-150
+    }
+    h3 {
+        @apply text-lg mt-2 mb-3 font-semibold
+    }
+}

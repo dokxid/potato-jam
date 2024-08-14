@@ -5,6 +5,9 @@ import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
 import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
+import SettingsUtil from "../lib/SettingsUtil.ts";
+
+let local_mode = SettingsUtil.get('local_mode')
 import { DEFAULT_INSTRUMENT } from '../lib/Instruments';
 
 let url = new URL(window.location.href)
@@ -20,7 +23,6 @@ function panic(msg: string) {
 
 async function accepted() {
     let processing = processingRef.value
-    console.log(":HELLOAS")
     if(!processing) {
         return panic("Accepted without processing?!?!")
     }
@@ -62,7 +64,7 @@ let client: PotatoClient | undefined;
 async function init() {
     if(processingRef.value) return;
     await PotatoNet.init();
-    if(urlRoom === "") {
+    if(urlRoom === "" || local_mode) {
         server = await PotatoNet.initServer();
         urlRoom = server.peer.id;
         processingRef.value = server.localClient;

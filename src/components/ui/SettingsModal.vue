@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import Settings from "./Settings.vue";
+import Settings from "../Settings.vue";
 
 </script>
 

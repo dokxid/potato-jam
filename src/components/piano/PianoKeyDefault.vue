@@ -21,7 +21,7 @@ const classObject = computed(() => ({
 
 <template>
   <div 
-      class="flex font-mono bg-gradient-to-t from-primary from-30% to-secondary to-9fh0% text-black justify-center items-center flex-initial rounded-sm"
+      class="flex grow font-mono bg-gradient-to-t from-primary from-30% to-secondary to-9fh0% text-black justify-center items-center flex-initial rounded-sm"
       :class="classObject"
   >
     <p class="note-name" v-show="debug">{{ note }}</p>
