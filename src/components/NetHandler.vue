@@ -3,12 +3,12 @@ import { onMounted, onUnmounted, Ref, ref } from 'vue';
 import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
 import PotatoServer, { LOCAL_CLIENT_ID, ServerNotePayload } from '../lib/net/PotatoServer';
-import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/SoundHandler';
+import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/sound/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
 import SettingsUtil from "../lib/SettingsUtil.ts";
 
 let local_mode = SettingsUtil.get('local_mode')
-import { DEFAULT_INSTRUMENT } from '../lib/Instruments';
+import { DEFAULT_INSTRUMENT } from '../lib/sound/Instruments';
 
 let url = new URL(window.location.href)
 let urlRoom = url.searchParams.get("room") || "";

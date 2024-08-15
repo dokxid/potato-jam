@@ -2,9 +2,9 @@
 
 import * as Tone from "tone";
 import Instrument, { DEFAULT_INSTRUMENT } from "./Instruments"
-import { ServerNotePayload, LOCAL_CLIENT_ID, SwitchInstrumentPayload} from "./net/PotatoServer";
-import { Optional } from "./TypeUtil";
-import PotatoNet, { PotatoPeerId } from "./net/PotatoNet";
+import { ServerNotePayload, LOCAL_CLIENT_ID, SwitchInstrumentPayload} from "../net/PotatoServer";
+import { Optional } from "../TypeUtil";
+import PotatoNet, { PotatoPeerId } from "../net/PotatoNet";
 
 /** This payload might come from the user itself or from a remote client */
 export type NoteEventPayload = Optional<ServerNotePayload, "id">

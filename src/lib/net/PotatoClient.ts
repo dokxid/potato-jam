@@ -5,7 +5,7 @@ import { Optional } from "../TypeUtil";
 import SettingsUtil from "../SettingsUtil";
 import { reactive } from "vue";
 import EventEmitter from "eventemitter3";
-import { ClientSwitchInstrumentPayload, NoteEventPayload } from "../SoundHandler";
+import { ClientSwitchInstrumentPayload, NoteEventPayload } from "../sound/SoundHandler";
 
 // Please make K=V in this enum!!
 export enum ClientPayloadType {

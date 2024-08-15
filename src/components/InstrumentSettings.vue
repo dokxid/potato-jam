@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
 import InstrumentSwitcher from "./ui/InstrumentSwitcher.vue";
-import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
+import SoundHandler, { NoteEventPayload } from "../lib/sound/SoundHandler.ts";
 import {onMounted, ref, watch} from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";
-import { DEFAULT_INSTRUMENT } from "../lib/Instruments";
+import { DEFAULT_INSTRUMENT } from "../lib/sound/Instruments.ts";
 import { LOCAL_CLIENT_ID } from "../lib/net/PotatoServer";
 
 // let sound_events = defineModel<NoteEventPayload[]>()

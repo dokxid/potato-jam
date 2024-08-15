@@ -1,5 +1,5 @@
 import EventEmitter from "eventemitter3";
-import { ClientSwitchInstrumentPayload, NoteEventPayload } from "./SoundHandler";
+import { ClientSwitchInstrumentPayload, NoteEventPayload } from "./sound/SoundHandler";
 import { SwitchInstrumentPayload } from "./net/PotatoServer";
 
 type MainEvents = {
