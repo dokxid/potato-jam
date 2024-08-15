@@ -8,7 +8,8 @@
     "tw_watch": "tailwindcss -i ./src/input.css -o ./src/output.css --watch",
     "tw_build": "tailwindcss -i ./src/input.css -o ./src/output.css",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "full_dev_windows": "start /b npm run tw_watch && start /b npm run dev"
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",
