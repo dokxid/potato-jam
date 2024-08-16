@@ -6,6 +6,7 @@ import {onMounted, ref, watch} from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";
 import { DEFAULT_INSTRUMENT } from "../lib/sound/Instruments.ts";
 import { LOCAL_CLIENT_ID } from "../lib/net/PotatoServer";
+import { DEFAULT_KEYBOARD_DATA } from "../lib/sound/Keyboard";
 
 // let sound_events = defineModel<NoteEventPayload[]>()
 
@@ -29,16 +30,26 @@ async function read_file(files: any) {
 }
 
 watch(instrument_selected, (new_instrument) => {
-  MainEventHandler.sendUserSwitchInstrumentPayload({instrument_id: new_instrument})
+  MainEventHandler.sendUserSwitchInstrumentPayload({keyboard_id: 0, instrument_id: new_instrument})
 })
 
 MainEventHandler.on("remoteSwitchInstrumentPayload", (payload) => {
-  soundHandler.set_peer_instrument(payload.id, payload.instrument_id);
+  console.log(`payload is ${payload.id} ${payload.keyboard_id} ${payload.instrument_id}`)
+  soundHandler.set_defaults(payload.id, payload.keyboard_id)
+  soundHandler.change_peer_keyboard_instrument(payload.id, payload.keyboard_id, payload.instrument_id);
+})
+
+MainEventHandler.on("remoteKeyboardPayload", (payload) => {
+  console.log(`WE ARE HERE ${payload.event} ${soundHandler}`)
+  // soundHandler.set_defaults(payload.id, payload.keyboard_id)
+  if (payload.event === "create")
+    soundHandler.add_peer_keyboard(payload.id, payload.keyboard_data)
 })
 
 async function init() {
   soundHandler = new SoundHandler()
   emit('sound_handler_initialized')
+  console.log("instrumentsettings init")
   MainEventHandler.sendHandlerInitialized()
 }
 

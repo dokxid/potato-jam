@@ -2,6 +2,7 @@ import Peer from "peerjs";
 import { Ref, ref } from "vue";
 import PotatoServer from "./PotatoServer";
 import PotatoClient, { PotatoClientProcessing } from "./PotatoClient";
+import { KeyboardData } from "../sound/Keyboard";
 
 /** 
  * Must be the DataConnection's .peer on the server.
@@ -16,7 +17,7 @@ export type PotatoUser = {
     icon: string,
     /** A valid css color */
     color: string,
-    instrument?: string
+    keyboards?: KeyboardData[]
 }
 
 export type IdentifiedPayload = {

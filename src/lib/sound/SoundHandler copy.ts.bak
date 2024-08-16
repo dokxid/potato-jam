@@ -33,74 +33,36 @@ export default class SoundHandler {
         if (peer === undefined) {
             peer = LOCAL_CLIENT_ID
         }
-
-        console.log(`loading keyboard ${keyboard_id}`)
         
         this.init_peer_keyboards(peer)
         let keyboard_data: KeyboardData = this.peer_keyboards_data.get(peer)[keyboard_id]
 
         if (keyboard_data === undefined) {
             console.log("keyboard_data undefined??? set it please")
-            keyboard_data = DEFAULT_KEYBOARD_DATA
-            // this.set_defaults(peer, keyboard_id)
+            this.set_defaults(peer, keyboard_id)
         }
 
-        this.peer_keyboards.get(peer)?.push(new Keyboard(keyboard_data))
-        console.log(`pushed keyuboard ${keyboard_data.keyboard_id}`)
-        console.log(`keyboards are now ${this.peer_keyboards.get(peer)}`)
+        if (!this.peer_is_correct_keyboard_loaded(peer, keyboard_data)) {
+            this.peer_keyboards.get(peer)?.push(new Keyboard(keyboard_data))
+        }
     }
-
-    add_peer_keyboard(peer: PotatoPeerId, keyboard_data: KeyboardData) {
+    change_peer_keyboard_instrument(peer: PotatoPeerId, keyboard_id: KeyboardID, instrument: InstrumentID) {
         if (peer === undefined) {
             peer = LOCAL_CLIENT_ID
         }
-
-        this.init_peer_keyboards(peer)
-
-        let peer_keyboard_data = this.peer_keyboards_data.get(peer)
-
-        if (peer_keyboard_data === undefined) {
-            throw new Error("WHAT???")
-        }
-
         
-        if (!keyboard_data.keyboard_id) {
-            keyboard_data.keyboard_id = peer_keyboard_data.length || 0
-            console.log(`keyboard data keyboard id is undefined setting to ${peer_keyboard_data.length || 0}`)
-        }
-
-        console.log(`adding new keyboard ${peer} ${keyboard_data.instrument_id} ${keyboard_data.keyboard_id}`)
-
-        peer_keyboard_data.push(keyboard_data)
-
-        console.log(`keyboard data is now ${this.peer_keyboards_data.get(peer)}`)
-
-        this.load_peer_keyboard(peer, keyboard_data.keyboard_id)
-    }
-
-    change_peer_keyboard_instrument(peer: PotatoPeerId, keyboard_id: KeyboardID, instrument_id: InstrumentID) {
-        if (peer === undefined) {
-            peer = LOCAL_CLIENT_ID
-        }
-
         this.init_peer_keyboards(peer)
-
-        let peer_keyboards = this.peer_keyboards.get(peer)
-
-        if (peer_keyboards === undefined) {
-            throw new Error("HELP MEEE")
+        let keyboards = this.peer_keyboards.get(peer)
+        keyboards?.forEach((element) => {
+            
+        })
+        if (keyboards[keyboard_id] === undefined) {
+            this.load_peer_keyboard(peer, keyboard_id)
         }
-        if (peer_keyboards[keyboard_id] === undefined) {
-            throw new Error("KEYBOARD WHICH YOU TRYING TO CHANGEI NSTRUN IS NOT LOADED")
-        }
-
-        peer_keyboards[keyboard_id].set_instrument(instrument_id)
+        keyboards[keyboard_id].set_instrument(instrument)
     }
 
     init_peer_keyboards(peer: PotatoPeerId) {
-        if (peer === undefined) {
-            peer = LOCAL_CLIENT_ID
-        }
         if (this.peer_keyboards.get(peer) === undefined) this.peer_keyboards.set(peer, [])
         if (this.peer_keyboards_data.get(peer) === undefined) this.peer_keyboards_data.set(peer, [])
     }
@@ -125,28 +87,63 @@ export default class SoundHandler {
         }
     }
 
+    set_peer_keyboard(peer: PotatoPeerId, keyboard_data: KeyboardData): KeyboardID {
+        if (peer === undefined) {
+            peer = LOCAL_CLIENT_ID
+        }
+        
+        this.init_peer_keyboards(peer)
+
+        keyboard_data.keyboard_id = this.peer_keyboards_data.get(peer)?.length || 0
+        let keyboards = this.peer_keyboards.get(peer)
+        if (keyboards && keyboards[keyboard_data.keyboard_id] !== undefined) keyboards[keyboard_data.keyboard_id].release_all();
+
+        this.peer_keyboards_data.get(peer)?.push(keyboard_data)
+        this.load_peer_keyboard(peer, keyboard_data.keyboard_id)
+
+        return keyboard_data.keyboard_id
+    }
+
+    peer_is_any_keyboard_loaded(peer: PotatoPeerId) {
+        return this.peer_keyboards.get(peer) !== undefined
+    }
+    peer_is_correct_keyboard_loaded(peer: PotatoPeerId, correct_keyboard_data: KeyboardData): boolean {
+        let keyboards = this.peer_keyboards.get(peer)
+        if (keyboards === undefined)
+            return false
+
+        let keyboard_id = correct_keyboard_data.keyboard_id || 0
+        let keyboard = keyboards[keyboard_id]
+        
+        if (keyboard === undefined)
+            return false
+
+
+        return keyboard.get_serializable_configuration() === correct_keyboard_data
+    }
+
     set_loaded() {
         this.loaded = true
     }
 
     async play(note_event: NoteEventPayload) {
         if(PotatoNet.processing === undefined) return;
+        this.init_peer_keyboards(note_event.id)
 
         let peer_id = note_event.id || PotatoNet.processing.localId
-        this.init_peer_keyboards(peer_id)
-
+        
         let peer_keyboards = this.peer_keyboards_data.get(peer_id)
         if (peer_keyboards === undefined) {
-            throw new Error("PEER HAS NO KEYBOARDS!!")
+            throw new Error("GOONERS CRISPED UP IN THE SUN: PEER HAS NO KEYBOARDS!!")
         }
 
         let keyboard_id = note_event.keyboard_id
         if (keyboard_id === undefined) {
-            throw new Error("KEYBOARD ID IS UNDEFINED!!")
+            throw new Error("GOONERS CRISPED UP IN THE SUN: KEYBOARD ID IS UNDEFINED!!")
         }
 
-        //let keyboard_data: KeyboardData = peer_keyboards[keyboard_id]
-        //this.load_peer_keyboard(peer_id, keyboard_id)
+        let keyboard_data: KeyboardData = peer_keyboards[keyboard_id]
+        this.load_peer_keyboard(peer_id, keyboard_data)
 
         console.log("peer id " + peer_id)
 

@@ -9,6 +9,7 @@ import SettingsUtil from "../lib/SettingsUtil.ts";
 
 let local_mode = SettingsUtil.get('local_mode')
 import { DEFAULT_INSTRUMENT } from '../lib/sound/Instruments';
+import { DEFAULT_KEYBOARD_DATA, Keyboard, KeyboardData } from '../lib/sound/Keyboard';
 
 let url = new URL(window.location.href)
 let urlRoom = url.searchParams.get("room") || "";
@@ -35,6 +36,12 @@ async function accepted() {
     processing.on("switchInstrumentPayload", (event) => {
         MainEventHandler.sendRemoteSwitchInstrumentPayload(event);
     })
+    processing.on("keyboardPayload", (event) => {
+        /*MainEventHandler.on("handlerInitialized", () => {
+            MainEventHandler.sendRemoteKeyboardPayload(event)
+        })*/
+       MainEventHandler.sendRemoteKeyboardPayload(event)
+    })
 
     console.log(processing.connected)
 
@@ -54,6 +61,10 @@ async function accepted() {
     // When instrument is changed by the user
     MainEventHandler.on("userSwitchInstrumentPayload", (payload) => {
         processing.sendSwitchInstrumentPayload(payload);
+    })
+    MainEventHandler.on("userKeyboardPayload", (payload) => {
+        console.log("sending keyboard change to processing")
+        processing.sendKeyboardPayload(payload)
     })
 
     set_connected_peer_instruments()
@@ -104,21 +115,42 @@ function copyRoomLink() {
 
 async function set_connected_peer_instruments() {
     let processing = processingRef.value
+
+    console.log("SET CONNECTED PEER INSTRUMENTS")
+
+    MainEventHandler.sendUserKeyboardPayload({event: "create", keyboard_data: DEFAULT_KEYBOARD_DATA})
     
-    MainEventHandler.sendUserSwitchInstrumentPayload({
-        instrument_id: DEFAULT_INSTRUMENT
-    })
+    //MainEventHandler.sendUserSwitchInstrumentPayload({
+    //    keyboard_id: 0,
+    //    instrument_id: DEFAULT_INSTRUMENT
+   // })
 
     for(let id in processing.connected) {
             let user = processing.connected[id];
-            let instrument = user.instrument || DEFAULT_INSTRUMENT
-    
-            console.log(id, instrument)
-    
-            MainEventHandler.sendRemoteSwitchInstrumentPayload({
-                id,
-                instrument_id: instrument
+            // let instrument = user.instrument || DEFAULT_INSTRUMENT
+            let keyboards = user.keyboards
+
+            console.log(`user.keyboards is ${user.id} ${keyboards}`)
+
+            if (keyboards === undefined) {
+                keyboards = new Array<KeyboardData>
+                keyboards.push(DEFAULT_KEYBOARD_DATA)
+            }
+
+            keyboards.forEach((keyboard) => {
+                console.log(`sending ${user.id} "create" ${keyboard}`)
+                console.log(`user is ${user.id} we are ${processing?.localId}`)
+                if (user.id !== processing?.localId)
+                    MainEventHandler.sendRemoteKeyboardPayload({id: user.id, event: "create", keyboard_data: keyboard})
             })
+
+            // console.log(id, instrument)
+    
+            /*MainEventHandler.sendRemoteSwitchInstrumentPayload({
+                id,
+                keyboard_id: 0,
+                instrument_id: instrument
+            })*/
         }
 }
 

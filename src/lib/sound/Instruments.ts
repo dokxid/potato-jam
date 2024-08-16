@@ -6,6 +6,8 @@ export const INSTRUMENT_LIST = [
 ]
 export const DEFAULT_INSTRUMENT: string = INSTRUMENT_LIST[0]
 
+export type InstrumentID = string
+
 export default class Instrument {
     divisions: number = 12
     octave: number = 4
