@@ -45,15 +45,6 @@ async function accepted() {
 
     console.log(processing.connected)
 
-    /* due to some restructuring set_connected_peer_instruments got called BEFORE the soundhandler was actually loaded, 
-    so it was all just going nowhere basically
-    so it has to do this on handlerInitialized 
-    theres also an extra call for set_connected_peer_instruments because      */
-
-    MainEventHandler.on("handlerInitialized", () => {
-            set_connected_peer_instruments()
-    })
-
     // When a key is pressed by the user
     MainEventHandler.on("userNotePayload", (payload) => {
         processing.sendNotePayload(payload);
@@ -66,7 +57,7 @@ async function accepted() {
         console.log("sending keyboard change to processing")
         processing.sendKeyboardPayload(payload)
     })
-
+    
     set_connected_peer_instruments()
 }
 
@@ -119,18 +110,10 @@ async function set_connected_peer_instruments() {
     console.log("SET CONNECTED PEER INSTRUMENTS")
 
     MainEventHandler.sendUserKeyboardPayload({event: "create", keyboard_data: DEFAULT_KEYBOARD_DATA})
-    
-    //MainEventHandler.sendUserSwitchInstrumentPayload({
-    //    keyboard_id: 0,
-    //    instrument_id: DEFAULT_INSTRUMENT
-   // })
 
     for(let id in processing.connected) {
             let user = processing.connected[id];
-            // let instrument = user.instrument || DEFAULT_INSTRUMENT
             let keyboards = user.keyboards
-
-            console.log(`user.keyboards is ${user.id} ${keyboards}`)
 
             if (keyboards === undefined) {
                 keyboards = new Array<KeyboardData>
@@ -143,14 +126,6 @@ async function set_connected_peer_instruments() {
                 if (user.id !== processing?.localId)
                     MainEventHandler.sendRemoteKeyboardPayload({id: user.id, event: "create", keyboard_data: keyboard})
             })
-
-            // console.log(id, instrument)
-    
-            /*MainEventHandler.sendRemoteSwitchInstrumentPayload({
-                id,
-                keyboard_id: 0,
-                instrument_id: instrument
-            })*/
         }
 }
 

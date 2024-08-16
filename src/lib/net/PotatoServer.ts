@@ -226,6 +226,12 @@ export default class PotatoServer {
                 return
             }
 
+            console.log(`keyboard data keyboard id is ${data.keyboard_data?.keyboard_id}`)
+
+            /*if (data.keyboard_data?.keyboard_id === undefined) {
+                data.keyboard_data.keyboard_id = keyboards.length
+            }*/
+
             switch(event) {
                 case "create":
                     keyboards.push(data.keyboard_data)

@@ -50,7 +50,7 @@ async function initSoundHandler() {
       <div class="container mx-auto flex flex-col md:flex-row md:flex-wrap gap-4 py-5 items-center overflow-x-scroll">
 
         <UIContainer :title="'lobby'" class="">
-          <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
+          <NetHandler v-if="started" ref="NetHandler_ref" :push_payload="push_payload"/>
         </UIContainer>
 
 <!--        <UIContainer :title="'instrument list'">-->
