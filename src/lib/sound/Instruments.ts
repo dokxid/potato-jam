@@ -65,7 +65,7 @@ export class meow extends Instrument {
         // woops i thought it did something completely different this does fit
         this.sampler = new Tone.Sampler({
             urls: {
-                C3: "meow.ogg"
+                C4: "meow.ogg"
             },
             release: 1,
             baseUrl: "/potato-jam/instruments/",
