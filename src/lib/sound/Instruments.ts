@@ -13,6 +13,8 @@ export type InstrumentID = string
 export default class Instrument {
     divisions: number = 12
     octave: number = 4
+    volume: number = -6
+
     locked: boolean = true
     id: string = "default"
 
@@ -76,6 +78,8 @@ export class meow extends Instrument {
                 this.unlock()
             }
         }).toDestination()
+
+        this.sampler.volume.value = this.volume
     }
 
     async press(pitch: number) {
@@ -105,6 +109,8 @@ export class PolySynth extends Instrument {
         super()
 
         this.polysynth = new Tone.PolySynth().toDestination()
+        this.polysynth.volume.value = this.volume
+
         this.unlock()
     }
 
@@ -159,6 +165,8 @@ export class Rhodes extends Instrument {
                 this.unlock()
             }
         }).toDestination()
+
+        this.sampler.volume.value = this.volume 
     }
 
     async press(pitch: number) {
@@ -209,6 +217,8 @@ export class Piano extends Instrument {
                 this.unlock()
             }
         }).toDestination()
+
+        this.sampler.volume.value = this.volume
     }
 
     async press(pitch: number) {
