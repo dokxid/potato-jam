@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {INSTRUMENT_LIST} from '../../lib/Instruments.ts';
+import {INSTRUMENT_LIST} from '../../lib/sound/Instruments.ts';
 
 const selected = defineModel()
 const emit = defineEmits({

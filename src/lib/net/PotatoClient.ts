@@ -1,11 +1,11 @@
 import Peer, { DataConnection } from "peerjs";
 import PotatoNet, { PotatoPeerId, PotatoUser } from "./PotatoNet";
-import { ServerNotePayload, ServerPayload, ServerPayloadType, SwitchInstrumentPayload } from "./PotatoServer";
+import { KeyboardPayload, ServerNotePayload, ServerPayload, ServerPayloadType, SwitchInstrumentPayload } from "./PotatoServer";
 import { Optional } from "../TypeUtil";
 import SettingsUtil from "../SettingsUtil";
 import { reactive } from "vue";
 import EventEmitter from "eventemitter3";
-import { ClientSwitchInstrumentPayload, NoteEventPayload } from "../SoundHandler";
+import { ClientKeyboardPayload, ClientSwitchInstrumentPayload, NoteEventPayload } from "../sound/SoundHandler";
 
 // Please make K=V in this enum!!
 export enum ClientPayloadType {
@@ -15,13 +15,17 @@ export enum ClientPayloadType {
     NOTE_PAYLOAD = "NOTE_PAYLOAD",
 
     /** C2B: Sent to all clients when switching instrument */
-    SWITCH_INSTRUMENT_PAYLOAD = "SWITCH_INSTRUMENT_PAYLOAD"
+    SWITCH_INSTRUMENT_PAYLOAD = "SWITCH_INSTRUMENT_PAYLOAD",
+
+    /** C2B: Sent to all clients when activating/deleting a keyboard */
+    KEYBOARD_PAYLOAD = "KEYBOARD_PAYLOAD"
 }
 
 export type ClientPayloadData<T extends ClientPayloadType> = 
     T extends ClientPayloadType.IDENTIFY ? Optional<PotatoUser, "id">
     : T extends ClientPayloadType.NOTE_PAYLOAD ? NoteEventPayload
     : T extends ClientPayloadType.SWITCH_INSTRUMENT_PAYLOAD ? ClientSwitchInstrumentPayload
+    : T extends ClientPayloadType.KEYBOARD_PAYLOAD ? ClientKeyboardPayload
     : undefined
 
 /**
@@ -39,6 +43,7 @@ type PotatoClientEvents = {
     "accepted": () => {}
     "notePayload": (event: ServerNotePayload) => {}
     "switchInstrumentPayload": (event: SwitchInstrumentPayload) => {}
+    "keyboardPayload": (event: KeyboardPayload) => {}
 }
 export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
     connected: {[id: PotatoPeerId]: PotatoUser};
@@ -83,6 +88,11 @@ export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
         await this.send(ClientPayloadType.SWITCH_INSTRUMENT_PAYLOAD, event)
     }
 
+    async sendKeyboardPayload(event: ClientKeyboardPayload) {
+        console.log(`sending keyboard payload ${event.keyboard_data}`)
+        await this.send(ClientPayloadType.KEYBOARD_PAYLOAD, event)
+    }
+
     payload_funs: {[T in ServerPayloadType]: (payload: ServerPayload<T>) => void} = {
         [ServerPayloadType.CONNECTION_ACCEPTED]: (payload) => {
             for(let user of payload.data.connected) {
@@ -104,6 +114,10 @@ export class PotatoClientProcessing extends EventEmitter<PotatoClientEvents> {
         },
         [ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD]: (payload) => {
             this.emit("switchInstrumentPayload", payload.data)
+        },
+        [ServerPayloadType.KEYBOARD_PAYLOAD]: (payload) => {
+            console.log("got from server keyboardpayload")
+            this.emit("keyboardPayload", payload.data)
         }
     }
 

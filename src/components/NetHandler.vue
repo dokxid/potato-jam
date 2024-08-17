@@ -2,13 +2,14 @@
 import { onMounted, onUnmounted, Ref, ref } from 'vue';
 import PotatoNet from '../lib/net/PotatoNet';
 import PotatoClient, { PotatoClientProcessing } from '../lib/net/PotatoClient';
-import PotatoServer, { ServerNotePayload } from '../lib/net/PotatoServer';
-import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/SoundHandler';
+import PotatoServer, { LOCAL_CLIENT_ID, ServerNotePayload } from '../lib/net/PotatoServer';
+import SoundHandler, { ClientSwitchInstrumentPayload, NoteEventPayload } from '../lib/sound/SoundHandler';
 import MainEventHandler from '../lib/MainEventHandler';
 import SettingsUtil from "../lib/SettingsUtil.ts";
 
 let local_mode = SettingsUtil.get('local_mode')
-import { DEFAULT_INSTRUMENT } from '../lib/Instruments';
+import { DEFAULT_INSTRUMENT } from '../lib/sound/Instruments';
+import { DEFAULT_KEYBOARD_DATA, Keyboard, KeyboardData } from '../lib/sound/Keyboard';
 
 let url = new URL(window.location.href)
 let urlRoom = url.searchParams.get("room") || "";
@@ -35,20 +36,15 @@ async function accepted() {
     processing.on("switchInstrumentPayload", (event) => {
         MainEventHandler.sendRemoteSwitchInstrumentPayload(event);
     })
+    processing.on("keyboardPayload", (event) => {
+        /*MainEventHandler.on("handlerInitialized", () => {
+            MainEventHandler.sendRemoteKeyboardPayload(event)
+        })*/
+       MainEventHandler.sendRemoteKeyboardPayload(event)
+    })
 
     console.log(processing.connected)
 
-    for(let id in processing.connected) {
-        let user = processing.connected[id];
-        let instrument = user.instrument || DEFAULT_INSTRUMENT
-
-        console.log(id, instrument)
-
-        MainEventHandler.sendRemoteSwitchInstrumentPayload({
-            id,
-            instrument_id: instrument
-        })
-    }
     // When a key is pressed by the user
     MainEventHandler.on("userNotePayload", (payload) => {
         processing.sendNotePayload(payload);
@@ -57,6 +53,12 @@ async function accepted() {
     MainEventHandler.on("userSwitchInstrumentPayload", (payload) => {
         processing.sendSwitchInstrumentPayload(payload);
     })
+    MainEventHandler.on("userKeyboardPayload", (payload) => {
+        console.log("sending keyboard change to processing")
+        processing.sendKeyboardPayload(payload)
+    })
+    
+    set_connected_peer_instruments()
 }
 
 let server: PotatoServer | undefined;
@@ -100,6 +102,31 @@ async function unmounted() {
 function copyRoomLink() {
     if(!processingRef) return;
     navigator.clipboard.writeText(window.location.href)
+}
+
+async function set_connected_peer_instruments() {
+    let processing = processingRef.value
+
+    console.log("SET CONNECTED PEER INSTRUMENTS")
+
+    MainEventHandler.sendUserKeyboardPayload({event: "create", keyboard_data: DEFAULT_KEYBOARD_DATA})
+
+    for(let id in processing.connected) {
+            let user = processing.connected[id];
+            let keyboards = user.keyboards
+
+            if (keyboards === undefined) {
+                keyboards = new Array<KeyboardData>
+                keyboards.push(DEFAULT_KEYBOARD_DATA)
+            }
+
+            keyboards.forEach((keyboard) => {
+                console.log(`sending ${user.id} "create" ${keyboard}`)
+                console.log(`user is ${user.id} we are ${processing?.localId}`)
+                if (user.id !== processing?.localId)
+                    MainEventHandler.sendRemoteKeyboardPayload({id: user.id, event: "create", keyboard_data: keyboard})
+            })
+        }
 }
 
 onMounted(init)

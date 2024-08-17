@@ -8,12 +8,12 @@ import UIContainer from "./components/ui/UIContainer.vue";
 import UIAddContainer from "./components/ui/UIAddContainer.vue";
 import NavBar from "./components/ui/NavBar.vue";
 import NetHandler from "./components/NetHandler.vue";
-import SoundHandler, {NoteEventPayload} from "./lib/SoundHandler";
+import SoundHandler, {NoteEventPayload} from "./lib/sound/SoundHandler";
 import MainEventHandler from "./lib/MainEventHandler";
 import EnterOverlay from "./components/ui/EnterOverlay.vue";
 import PianoRollUI from "./components/ui/PianoRollUI.vue";
 import InstrumentSettingsUI from "./components/ui/InstrumentSettingsUI.vue";
-import Instrument from "./lib/Instruments.ts";
+import Instrument from "./lib/sound/Instruments.ts";
 
 // refs
 const started = ref<boolean>(false)
@@ -50,7 +50,7 @@ async function initSoundHandler() {
       <div class="container mx-auto flex flex-col md:flex-row md:flex-wrap gap-4 py-5 items-center overflow-x-scroll">
 
         <UIContainer :title="'lobby'" class="">
-          <NetHandler ref="NetHandler_ref" :push_payload="push_payload"/>
+          <NetHandler v-if="started" ref="NetHandler_ref" :push_payload="push_payload"/>
         </UIContainer>
 
 <!--        <UIContainer :title="'instrument list'">-->

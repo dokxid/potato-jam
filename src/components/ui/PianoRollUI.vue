@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import PianoRoll from "../piano/PianoRoll.vue";
 
-  import {NoteEventPayload} from "../../lib/SoundHandler.ts";
+  import {NoteEventPayload} from "../../lib/sound/SoundHandler.ts";
   import SettingsUtil from "../../lib/SettingsUtil.ts";
 
   const emit = defineEmits({

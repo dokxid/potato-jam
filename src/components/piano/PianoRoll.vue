@@ -5,7 +5,7 @@ import PianoKeyDefault from "./PianoKeyDefault.vue";
 import {constants} from "../../data/constants.ts";
 
 import {computed, onMounted, ref, watch} from "vue";
-import { NoteEventPayload } from "../../lib/SoundHandler.ts";
+import { NoteEventPayload } from "../../lib/sound/SoundHandler.ts";
 
 // emits
 const emit = defineEmits({
@@ -41,14 +41,14 @@ const keysDown = ref<{ [note: number]: boolean }>({})
 
 function press_key(note: number) {
   if(keysDown.value[note]) return;
-  emit("send_key_event", {event: "pressed", note})
+  emit("send_key_event", {event: "pressed", note, keyboard_id: 0})
   keysDown.value[note] = true;
 
 }
 
 function release_key(note: number) {
   if(!keysDown.value[note]) return;
-  emit("send_key_event", {event: "released", note})
+  emit("send_key_event", {event: "released", note, keyboard_id: 0})
   delete keysDown.value[note];
 }
 

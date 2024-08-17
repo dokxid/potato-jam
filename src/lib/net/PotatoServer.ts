@@ -1,6 +1,8 @@
 import Peer, { DataConnection } from "peerjs"
 import { IdentifiedPayload, PotatoPeerId, PotatoUser } from "./PotatoNet"
 import { ClientPayload, ClientPayloadData, ClientPayloadType, PotatoClientProcessing } from "./PotatoClient"
+import { DEFAULT_KEYBOARD_DATA, Keyboard, KeyboardData, KeyboardID } from "../sound/Keyboard"
+import { InstrumentID } from "../sound/Instruments"
 
 // Please make K=V in this enum!!
 export enum ServerPayloadType {
@@ -14,7 +16,10 @@ export enum ServerPayloadType {
     NOTE_PAYLOAD = "NOTE_PAYLOAD",
 
     /** S2B: Asks to switch instrument for peer */
-    SWITCH_INSTRUMENT_PAYLOAD = "SWITCH_INSTRUMENT_PAYLOAD"
+    SWITCH_INSTRUMENT_PAYLOAD = "SWITCH_INSTRUMENT_PAYLOAD",
+
+    /** S2B: Creates/deletes keyboards */
+    KEYBOARD_PAYLOAD = "KEYBOARD_PAYLOAD"
 }
 
 type ServerNewConnectionPayload = IdentifiedPayload & {
@@ -28,11 +33,19 @@ type ServerStatePayload = {
 
 export type ServerNotePayload = {
     event: string,
-    note: number
+    note: number,
+    keyboard_id: KeyboardID
 } & IdentifiedPayload
 
 export type SwitchInstrumentPayload = {
-    instrument_id: string
+    keyboard_id: KeyboardID,
+    instrument_id: InstrumentID
+} & IdentifiedPayload
+
+export type KeyboardPayload = {
+    event: string,
+    keyboard_data?: KeyboardData, //keyboard_data if the event is "create", for creating the keyboard from the data
+    keyboard_id?: KeyboardID, //keyboard_id if the event is "delete", to delete the keyboard with the specified id
 } & IdentifiedPayload
 
 export type ServerPayloadData<T extends ServerPayloadType> = 
@@ -41,6 +54,7 @@ export type ServerPayloadData<T extends ServerPayloadType> =
     : T extends ServerPayloadType.REMOVED_CONNECTION ? IdentifiedPayload
     : T extends ServerPayloadType.NOTE_PAYLOAD ? ServerNotePayload
     : T extends ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD ? SwitchInstrumentPayload
+    : T extends ServerPayloadType.KEYBOARD_PAYLOAD ? KeyboardPayload
     : undefined
 
 /**
@@ -183,10 +197,55 @@ export default class PotatoServer {
             let data = payload.data as SwitchInstrumentPayload
             data.id = id;
             let user = this.connections[id].user
+            if (user?.keyboards === undefined) {
+                user.keyboards = new Array<KeyboardData>
+            }
+            console.log(`switching instruments thing is ${user.keyboards[payload.data.keyboard_id]}`)
             if(user) {
-                user.instrument = payload.data.instrument_id;
+                user.keyboards[payload.data.keyboard_id].instrument_id = payload.data.instrument_id;
             }
             this.broadcast(ServerPayloadType.SWITCH_INSTRUMENT_PAYLOAD, data);
+        },
+        [ClientPayloadType.KEYBOARD_PAYLOAD]: (id, payload) => {
+            let data = payload.data as KeyboardPayload
+            let event = data.event
+            let user = this.connections[id].user
+            data.id = id
+
+            console.log(`received keyboard data ${data.keyboard_data}`)
+
+            if (user?.keyboards === undefined)
+                user.keyboards = new Array<KeyboardData>
+
+            console.log(`user keyboards is now ${user?.keyboards}`)
+
+            let keyboards = user?.keyboards
+
+            if (keyboards === undefined) {
+                console.log("UNDEFINED KEYBOARDS!!!!")
+                return
+            }
+
+            console.log(`keyboard data keyboard id is ${data.keyboard_data?.keyboard_id}`)
+
+            /*if (data.keyboard_data?.keyboard_id === undefined) {
+                data.keyboard_data.keyboard_id = keyboards.length
+            }*/
+
+            switch(event) {
+                case "create":
+                    keyboards.push(data.keyboard_data)
+                    break
+                case "delete":
+                    keyboards[data.keyboard_id] = undefined
+                    break
+                default:
+                    console.log("no event?")
+            }
+
+            console.log(`done my thing ${keyboards}`)
+
+            this.broadcast(ServerPayloadType.KEYBOARD_PAYLOAD, data)
         }
     }
 
