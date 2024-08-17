@@ -3,7 +3,8 @@ import * as Tone from "tone";
 export const INSTRUMENT_LIST = [
     "meow",
     "synth",
-    "rhodes"
+    "rhodes",
+    "piano"
 ]
 export const DEFAULT_INSTRUMENT: string = INSTRUMENT_LIST[0]
 
@@ -31,6 +32,8 @@ export default class Instrument {
                 return new PolySynth()
             case "rhodes":
                 return new Rhodes()
+            case "piano":
+                return new Piano()
             default:
                 return new Instrument()
         }
@@ -133,24 +136,75 @@ export class Rhodes extends Instrument {
 
         this.sampler = new Tone.Sampler({
             urls: {
-                C3: "Rhodes_C3_91.ogg", 
-                E3: "Rhodes_E3_91.ogg", 
-                "G#3": "Rhodes_Gs3_91.ogg", 
-                C4: "Rhodes_C4_91.ogg", 
-                E4: "Rhodes_E4_91.ogg", 
-                "G#4": "Rhodes_Gs4_91.ogg", 
-                C5: "Rhodes_C5_91.ogg", 
-                E5: "Rhodes_E5_91.ogg", 
-                "G#5": "Rhodes_Gs5_91.ogg", 
-                C6: "Rhodes_C6_91.ogg", 
-                E6: "Rhodes_E6_91.ogg", 
-                "G#6": "Rhodes_Gs6_91.ogg", 
-                C7: "Rhodes_C7_91.ogg", 
-                E7: "Rhodes_E7_91.ogg", 
-                "G#7": "Rhodes_Gs7_91.ogg",
+                C3: "Rhodes_C3.ogg", 
+                E3: "Rhodes_E3.ogg", 
+                "G#3": "Rhodes_Gs3.ogg", 
+                C4: "Rhodes_C4.ogg", 
+                E4: "Rhodes_E4.ogg", 
+                "G#4": "Rhodes_Gs4.ogg", 
+                C5: "Rhodes_C5.ogg", 
+                E5: "Rhodes_E5.ogg", 
+                "G#5": "Rhodes_Gs5.ogg", 
+                C6: "Rhodes_C6.ogg", 
+                E6: "Rhodes_E6.ogg", 
+                "G#6": "Rhodes_Gs6.ogg", 
+                C7: "Rhodes_C7.ogg", 
+                E7: "Rhodes_E7.ogg", 
+                "G#7": "Rhodes_Gs7.ogg",
+                C8: "Rhodes_C8.ogg",
             },
             release: 0.2,
             baseUrl: "/potato-jam/instruments/rhodes/",
+            onload: () => {
+                this.unlock()
+            }
+        }).toDestination()
+    }
+
+    async press(pitch: number) {
+        if (this.locked)
+            return
+        await this.sampler.triggerAttack(this.get_pitch(pitch))
+    }
+    async release(pitch: number) {
+        if (this.locked)
+            return
+        await this.sampler.triggerRelease(this.get_pitch(pitch))
+    }
+    async release_all(){
+        if (this.locked)
+            return
+        await this.sampler.releaseAll()
+    }
+}
+
+export class Piano extends Instrument {
+    public id: string = "piano"
+    sampler: Tone.Sampler
+
+    constructor() {
+        super()
+
+        this.sampler = new Tone.Sampler({
+            urls: {
+                C3: "Piano_C3.ogg", 
+                E3: "Piano_E3.ogg", 
+                "G#3": "Piano_Gs3.ogg", 
+                C4: "Piano_C4.ogg", 
+                E4: "Piano_E4.ogg", 
+                "G#4": "Piano_Gs4.ogg", 
+                C5: "Piano_C5.ogg", 
+                E5: "Piano_E5.ogg", 
+                "G#5": "Piano_Gs5.ogg", 
+                C6: "Piano_C6.ogg", 
+                E6: "Piano_E6.ogg", 
+                "G#6": "Piano_Gs6.ogg", 
+                C7: "Piano_C7.ogg", 
+                E7: "Piano_E7.ogg", 
+                "G#7": "Piano_Gs7.ogg",
+            },
+            release: 0.2,
+            baseUrl: "/potato-jam/instruments/piano/",
             onload: () => {
                 this.unlock()
             }
