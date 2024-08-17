@@ -41,7 +41,7 @@ export default class Instrument {
         }
     }
     get_pitch(pitch: number) {
-        return 440*2**(((pitch+this.octave * this.divisions) - 69)/12)
+        return 440*2**(((pitch+this.octave * this.divisions) - 69)/this.divisions)
     }
 
     set_divisions(divisions: number) {
