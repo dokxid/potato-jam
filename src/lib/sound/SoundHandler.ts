@@ -90,11 +90,15 @@ export default class SoundHandler {
         if (peer_keyboards === undefined) {
             throw new Error("HELP MEEE")
         }
-        if (peer_keyboards[keyboard_id] === undefined) {
+
+        let peer_keyboard = peer_keyboards[keyboard_id]
+
+        if (peer_keyboard === undefined) {
             throw new Error("KEYBOARD WHICH YOU TRYING TO CHANGEI NSTRUN IS NOT LOADED")
         }
 
-        peer_keyboards[keyboard_id].set_instrument(instrument_id)
+        peer_keyboard.release_all()
+        peer_keyboard.set_instrument(instrument_id)
     }
 
     init_peer_keyboards(peer: PotatoPeerId) {
