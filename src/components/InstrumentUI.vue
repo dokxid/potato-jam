@@ -4,6 +4,7 @@ import InstrumentSwitcher from "./InstrumentSwitcher.vue";
 import SoundHandler, { NoteEventPayload } from "../lib/SoundHandler.ts";
 import {onMounted, ref, watch} from "vue";
 import MainEventHandler from "../lib/MainEventHandler.ts";
+import MIDIDeviceSelector from "./MIDIDeviceSelector.vue";
 
 // let sound_events = defineModel<NoteEventPayload[]>()
 
@@ -45,7 +46,8 @@ onMounted(() => init())
     <div>
       <h3>general settings</h3>
       <p>{{instrument_selected}}</p>
-
+      <h3>midi device</h3>
+      <MIDIDeviceSelector/>
     </div>
     <div>
       <h3>sample settings</h3>

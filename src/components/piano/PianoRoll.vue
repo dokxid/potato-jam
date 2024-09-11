@@ -6,6 +6,7 @@ import {constants} from "../../data/constants.ts";
 
 import {computed, onMounted, ref, watch} from "vue";
 import { NoteEventPayload } from "../../lib/SoundHandler.ts";
+import MainEventHandler from "../../lib/MainEventHandler.ts";
 
 // emits
 const emit = defineEmits({
@@ -70,6 +71,21 @@ function idx_trans(idx: number): number {
   return idx + transpose_amt.value
 }
 
+
+// If we're using this vue component for other users' piano rolls, make sure this
+// event only runs on the local piano roll :3
+MainEventHandler.on("userMIDINotePayload", (midi) => {
+  const note = idx_trans(midi.note)
+  switch(midi.event) {
+    case "pressed":
+      press_key(note)
+      break;
+    case "released":
+      release_key(note);
+      break;
+  }
+})
+
 function init() {
   window.addEventListener("keydown", function (ev) {
     let keybind_uppercase = ev.key.toUpperCase()
@@ -98,13 +114,13 @@ onMounted(init)
           class="btn font-mono w-40"
           :class="[transpose_amt == 0 ? 'btn-neutral' : 'btn-gradient']"
           @click="transpose_amt = 0"
-      > {{`transpose: +${transpose_amt}`}} </button>
-      <input type="range" min="0" max="11" v-model.number="transpose_amt" class="range range-primary"/>
+      > {{`transpose: ${transpose_amt >= 0 ? "+" : ""}${transpose_amt}`}} </button>
+      <input type="range" min="-128" max="128" v-model.number="transpose_amt" class="range range-primary"/>
     </div>
     <div class="flex flex-row w-full min-h-20 p-2 bg-base-100 space-x-1 justify-center rounded-sm overflow-x-auto">
       <PianoKeyDefault
           v-for="(_, idx) in key_amt"
-          :note="key_names[idx_trans(idx)%(key_names.length)]"
+          :note="key_names[Math.abs(idx_trans(idx))%(key_names.length)]"
           :is-down="computed(() => keysDown[idx_trans(idx)])"
           :highlighted="scale_pattern.includes(idx%12)"
           @mousedown="press_key(idx_trans(idx))"
